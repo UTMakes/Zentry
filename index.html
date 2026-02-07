@@ -98,12 +98,36 @@
         .modal-panel {
             transition: all 0.3s ease-out;
         }
+        
+        /* Banner Animation */
+        #announcement-banner {
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+        #announcement-banner.closed {
+            transform: translateY(-100%);
+            opacity: 0;
+            position: absolute; /* Prevent taking up space */
+            pointer-events: none;
+        }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col relative">
 
+    <!-- NEW: Announcement Banner -->
+    <div id="announcement-banner" class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white relative z-[60]">
+        <div class="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="bg-white/20 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider">New</span>
+                <p class="text-sm font-medium">Zentry v2.0 is live! Check out the new AI Assistant and Rating system.</p>
+            </div>
+            <button onclick="closeBanner()" class="text-white/80 hover:text-white transition p-1 hover:bg-white/10 rounded">
+                <i class="ph-bold ph-x"></i>
+            </button>
+        </div>
+    </div>
+
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 glass-effect border-b border-slate-700">
+    <nav class="sticky top-0 w-full z-50 glass-effect border-b border-slate-700">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center gap-2">
@@ -124,7 +148,7 @@
     </nav>
 
     <!-- Hero Section -->
-    <div class="relative pt-32 pb-12 sm:pt-40 sm:pb-16 lg:pb-24 overflow-hidden border-b border-slate-800/50">
+    <div class="relative pt-20 pb-12 sm:pt-28 sm:pb-16 lg:pb-24 overflow-hidden border-b border-slate-800/50">
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
             <h1 class="text-4xl tracking-tight font-extrabold text-white sm:text-5xl md:text-6xl">
                 <span class="block">Build. Ship.</span>
@@ -211,7 +235,7 @@
                     </div>
                 </div>
 
-                <!-- NEW: Category Filters (Pills) -->
+                <!-- Category Filters (Pills) -->
                 <div class="flex flex-wrap gap-2 justify-center" id="filter-container">
                     <button onclick="applyCategoryFilter('all')" class="filter-pill active px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700">All</button>
                     <button onclick="applyCategoryFilter('software')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700">Software</button>
@@ -375,8 +399,7 @@
         // 🚀 ZENTRY DATA CENTER
         // ==========================================
         
-        // UPGRADED DATA STRUCTURE
-        // Notice: 'rating' key is removed as it is now calculated automatically
+        // UPGRADED DATA STRUCTURE with Requirements
         const catalog = [
             {
                 id: "software",
@@ -398,7 +421,13 @@
                                 tags: ["Utility", "System"],
                                 downloadLink: "./downloads/zentry-fm-setup.exe",
                                 size: "14 MB",
-                                isNew: false
+                                isNew: false,
+                                requirements: {
+                                    os: "Windows 10/11 or Linux",
+                                    processor: "Dual Core 1.2GHz",
+                                    ram: "2 GB",
+                                    graphics: "Integrated Graphics"
+                                }
                             },
                             {
                                 id: "opt01",
@@ -412,7 +441,13 @@
                                 tags: ["Graphics", "Web"],
                                 downloadLink: "#",
                                 size: "8 MB",
-                                isNew: true
+                                isNew: true,
+                                requirements: {
+                                    os: "Windows, macOS, or Linux",
+                                    processor: "Any Modern CPU",
+                                    ram: "1 GB",
+                                    graphics: "N/A"
+                                }
                             }
                         ]
                     },
@@ -431,7 +466,13 @@
                                 tags: ["DevTool"],
                                 downloadLink: "#",
                                 size: "45 MB",
-                                isNew: false
+                                isNew: false,
+                                requirements: {
+                                    os: "Cross-platform",
+                                    processor: "Dual Core",
+                                    ram: "4 GB",
+                                    graphics: "Integrated"
+                                }
                             }
                         ]
                     }
@@ -452,12 +493,18 @@
                                 description: "A high-speed cyberpunk racing game with synthwave beats.",
                                 longDescription: "Race through 12 neon-soaked tracks in this adrenaline-pumping arcade racer. Features local multiplayer, leaderboard support, and an original synthwave soundtrack.",
                                 author: "NightStudio",
-                                downloads: 15600, // Highest download count = HOT badge + 5.0 Rating
+                                downloads: 15600, 
                                 icon: "ph-car-profile",
                                 tags: ["Racing", "Indie"],
                                 downloadLink: "#",
                                 size: "250 MB",
-                                isNew: false
+                                isNew: false,
+                                requirements: {
+                                    os: "Windows 10 (64-bit)",
+                                    processor: "Intel i5 or equivalent",
+                                    ram: "8 GB",
+                                    graphics: "GTX 1050 or better"
+                                }
                             },
                             {
                                 id: "game02",
@@ -471,7 +518,13 @@
                                 tags: ["Arcade", "Space"],
                                 downloadLink: "#",
                                 size: "120 MB",
-                                isNew: true
+                                isNew: true,
+                                requirements: {
+                                    os: "Windows 10",
+                                    processor: "Intel i3",
+                                    ram: "4 GB",
+                                    graphics: "Integrated Graphics"
+                                }
                             }
                         ]
                     },
@@ -490,7 +543,13 @@
                                 tags: ["RPG", "Pixel Art"],
                                 downloadLink: "#",
                                 size: "450 MB",
-                                isNew: false
+                                isNew: false,
+                                requirements: {
+                                    os: "Windows 10 / macOS",
+                                    processor: "Dual Core 2.0GHz",
+                                    ram: "4 GB",
+                                    graphics: "OpenGL 3.0 Compatible"
+                                }
                             }
                         ]
                     }
@@ -500,49 +559,56 @@
 
         // Global map for easy item lookup by ID
         let itemMap = {};
+        let allItemsList = [];
 
         // ==========================================
         // ⚙️ SYSTEM LOGIC
         // ==========================================
 
         function initSystem() {
+            // Check Banner Logic
+            const bannerClosed = localStorage.getItem('zentry_banner_closed');
+            if (bannerClosed) {
+                document.getElementById('announcement-banner').classList.add('closed');
+            }
+
             // 1. Collect all items
-            let allItems = [];
+            allItemsList = [];
             catalog.forEach(section => {
                 section.subsections.forEach(sub => {
                     sub.items.forEach(item => {
                         itemMap[item.id] = item;
                         item.categoryString = (section.id + " " + item.tags.join(" ")).toLowerCase();
-                        allItems.push(item);
+                        allItemsList.push(item);
                     });
                 });
             });
 
             // 2. Sort by downloads (Highest first) to find the #1 item
-            // We use a clone to sort so we don't mess up the display order in the grid
-            const sortedByDownloads = [...allItems].sort((a, b) => b.downloads - a.downloads);
+            const sortedByDownloads = [...allItemsList].sort((a, b) => b.downloads - a.downloads);
             
             // 3. Identify the Top Item (Max Downloads)
             const topItem = sortedByDownloads[0];
             const maxDownloads = topItem.downloads;
 
             // 4. Assign Properties (Automatic Ratings & Trending)
-            allItems.forEach(item => {
+            allItemsList.forEach(item => {
                 // UNIQUE TRENDING: Only the single highest downloaded item gets the badge
                 item.isTrending = (item.id === topItem.id);
-
-                // AUTOMATIC RATING:
-                // Base: 3.5 Stars
-                // Bonus: Up to 1.5 Stars based on popularity relative to the #1 item
-                // Result: The #1 item gets 5.0. Others scale down.
+                // AUTOMATIC RATING
                 const popularityRatio = item.downloads / maxDownloads;
                 const autoRating = 3.5 + (1.5 * popularityRatio);
-                
-                // Format to 1 decimal place (e.g., 4.7)
                 item.rating = autoRating.toFixed(1);
             });
 
             renderCatalog();
+        }
+
+        // Banner Functions
+        function closeBanner() {
+            const banner = document.getElementById('announcement-banner');
+            banner.classList.add('closed');
+            localStorage.setItem('zentry_banner_closed', 'true');
         }
 
         function toggleAbout() {
@@ -561,10 +627,41 @@
             const item = itemMap[itemId];
             if (!item) return;
 
+            // RELATED APPS LOGIC: Find 2 other items sharing at least 1 tag
+            const relatedApps = allItemsList.filter(other => 
+                other.id !== item.id && // Not self
+                other.tags.some(tag => item.tags.includes(tag)) // Shares a tag
+            ).slice(0, 2); // Take top 2
+
+            let relatedAppsHtml = '';
+            if (relatedApps.length > 0) {
+                const cards = relatedApps.map(app => `
+                    <div onclick="openProductModal('${app.id}')" class="bg-slate-800 p-3 rounded-xl border border-slate-700 cursor-pointer hover:border-blue-500 transition flex items-center gap-3">
+                        <div class="bg-slate-900 p-2 rounded-lg">
+                            <i class="ph ${app.icon} text-xl text-blue-400"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white text-sm">${app.name}</h4>
+                            <p class="text-xs text-slate-400">View Details</p>
+                        </div>
+                    </div>
+                `).join('');
+                
+                relatedAppsHtml = `
+                    <div class="border-t border-slate-800 pt-6 mt-6">
+                        <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">You might also like</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            ${cards}
+                        </div>
+                    </div>
+                `;
+            }
+
             const modalContent = document.getElementById('product-modal-content');
             const isReady = item.downloadLink !== "#";
             const btnClass = isReady ? "bg-blue-600 hover:bg-blue-700" : "bg-slate-700 cursor-not-allowed";
             const btnText = isReady ? "Download Now" : "Coming Soon";
+            const reqs = item.requirements || { os: "N/A", processor: "N/A", ram: "N/A", graphics: "N/A" };
 
             modalContent.innerHTML = `
                 <div class="relative">
@@ -596,14 +693,26 @@
                                 ${item.longDescription}
                             </p>
 
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="p-3 bg-slate-800 rounded-lg">
-                                    <span class="block text-xs text-slate-500 uppercase tracking-wider mb-1">File Size</span>
-                                    <span class="text-white font-mono text-sm">${item.size}</span>
-                                </div>
-                                <div class="p-3 bg-slate-800 rounded-lg">
-                                    <span class="block text-xs text-slate-500 uppercase tracking-wider mb-1">License</span>
-                                    <span class="text-white font-mono text-sm">Free / Open Source</span>
+                            <!-- NEW: System Requirements Grid -->
+                            <div>
+                                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">System Requirements</h4>
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                                        <span class="block text-slate-500 text-xs mb-1">OS</span>
+                                        <span class="text-white font-medium">${reqs.os}</span>
+                                    </div>
+                                    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                                        <span class="block text-slate-500 text-xs mb-1">Processor</span>
+                                        <span class="text-white font-medium">${reqs.processor}</span>
+                                    </div>
+                                    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                                        <span class="block text-slate-500 text-xs mb-1">RAM</span>
+                                        <span class="text-white font-medium">${reqs.ram}</span>
+                                    </div>
+                                    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                                        <span class="block text-slate-500 text-xs mb-1">Graphics</span>
+                                        <span class="text-white font-medium">${reqs.graphics}</span>
+                                    </div>
                                 </div>
                             </div>
 
@@ -615,6 +724,9 @@
                                     <i class="ph-bold ph-download-simple"></i> ${btnText}
                                 </a>
                             </div>
+
+                            <!-- NEW: Related Apps -->
+                            ${relatedAppsHtml}
                         </div>
                     </div>
                 </div>
@@ -626,15 +738,12 @@
         // Helper to generate Star HTML
         function getStarRating(rating) {
             const fullStars = Math.floor(rating);
-            const hasHalf = rating % 1 !== 0; // Check if decimal part exists
-            const emptyStars = 5 - Math.ceil(rating); // Remaining empty stars
-
+            const hasHalf = rating % 1 !== 0; 
+            const emptyStars = 5 - Math.ceil(rating); 
             let html = '';
             for(let i=0; i<fullStars; i++) html += '<i class="ph-fill ph-star text-yellow-500 text-xs"></i>';
             if(hasHalf) html += '<i class="ph-fill ph-star-half text-yellow-500 text-xs"></i>';
-            // Optional: Fill remaining with empty stars for cleaner look
             for(let i=0; i<emptyStars; i++) html += '<i class="ph-fill ph-star text-slate-700 text-xs"></i>';
-            
             return html;
         }
 
@@ -645,12 +754,8 @@
                 : "bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700";
             const buttonText = isReady ? "Download" : "Soon";
             
-            // LOGIC: Check for badges
-            // Order of precedence: Trending > New
             let badgeHtml = '';
-            
             if (product.isTrending) {
-                // UNIQUE AUTOMATIC TRENDING BADGE
                 badgeHtml = `<span class="absolute -top-2 -right-2 bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg shadow-orange-500/20 border border-orange-400 z-10 flex items-center gap-1 animate-pulse"><i class="ph-fill ph-fire"></i> HOT</span>`;
             } else if (product.isNew) {
                 badgeHtml = `<span class="absolute -top-2 -right-2 bg-green-500 text-slate-900 text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg shadow-green-500/20 border border-green-400 z-10">NEW</span>`;
@@ -685,7 +790,6 @@
                            <i class="ph-bold ph-download-simple"></i> ${buttonText}
                         </button>
                     </div>
-                    <!-- Hidden field for filtering -->
                     <div class="hidden category-string">${product.categoryString}</div>
                 </div>
             `;
@@ -723,9 +827,7 @@
             });
         }
 
-        // NEW: Category Filter Logic
         function applyCategoryFilter(category) {
-            // 1. Update Buttons
             const buttons = document.querySelectorAll('.filter-pill');
             buttons.forEach(btn => {
                 if(btn.innerText.toLowerCase().includes(category) || (category === 'all' && btn.innerText === 'All')) {
@@ -734,21 +836,15 @@
                     btn.classList.remove('active');
                 }
             });
-
-            // 2. Filter Grid
             const cards = document.querySelectorAll('.product-card');
             cards.forEach(card => {
                 const catString = card.querySelector('.category-string').innerText;
-                const wrapper = card.parentElement; // grid-wrapper
-                
                 if (category === 'all' || catString.includes(category)) {
                     card.style.display = 'flex';
                 } else {
                     card.style.display = 'none';
                 }
             });
-
-            // 3. Clean up empty sections
             document.querySelectorAll('.subsection-wrapper').forEach(sub => {
                 const visibleCards = Array.from(sub.querySelectorAll('.product-card')).filter(c => c.style.display !== 'none');
                 sub.style.display = visibleCards.length > 0 ? 'block' : 'none';
@@ -759,27 +855,21 @@
             });
         }
 
-        // Existing Text Search Filter
         function filterGrid(term) {
             const searchTerm = term.toLowerCase();
             const sections = document.querySelectorAll('.section-wrapper');
             let totalVisible = 0;
-
             sections.forEach(section => {
                 const subsections = section.querySelectorAll('.subsection-wrapper');
                 let sectionHasVisible = false;
-
                 subsections.forEach(sub => {
                     const cards = sub.querySelectorAll('.product-card');
                     let subHasVisible = false;
-
                     cards.forEach(card => {
                         const name = card.querySelector('.filter-name').innerText.toLowerCase();
                         const desc = card.querySelector('.filter-desc').innerText.toLowerCase();
                         const tags = card.querySelector('.filter-tags').innerText.toLowerCase();
-                        
                         const isMatch = name.includes(searchTerm) || desc.includes(searchTerm) || tags.includes(searchTerm);
-                        
                         if (isMatch) {
                             card.style.display = 'flex';
                             subHasVisible = true;
@@ -788,14 +878,11 @@
                             card.style.display = 'none';
                         }
                     });
-
                     sub.style.display = subHasVisible ? 'block' : 'none';
                     if (subHasVisible) sectionHasVisible = true;
                 });
-
                 section.style.display = sectionHasVisible ? 'block' : 'none';
             });
-            
             const noResults = document.getElementById('no-results-msg');
             if (totalVisible === 0 && searchTerm !== '') {
                 noResults.classList.remove('hidden');
@@ -815,13 +902,9 @@
             }
         });
 
-        // AI Logic (Unchanged)
         const chatWindow = document.getElementById('ai-chat-window');
         const chatMessages = document.getElementById('chat-messages');
         let isChatOpen = false;
-        let lastSearchResults = [];
-        let lastSearchIndex = 0;
-
         function toggleChat() {
             isChatOpen = !isChatOpen;
             if (isChatOpen) {
@@ -836,13 +919,11 @@
         function addTypingIndicator() { const div = document.createElement('div'); div.className = 'flex gap-2'; div.id = 'typing-' + Date.now(); div.innerHTML = `<div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0"><i class="ph-fill ph-robot text-white text-xs"></i></div><div class="bg-slate-800 border border-slate-700 p-3 rounded-2xl rounded-tl-none flex gap-1 items-center h-11"><div class="w-2 h-2 bg-slate-400 rounded-full typing-dot"></div><div class="w-2 h-2 bg-slate-400 rounded-full typing-dot"></div><div class="w-2 h-2 bg-slate-400 rounded-full typing-dot"></div></div>`; chatMessages.appendChild(div); chatMessages.scrollTop = chatMessages.scrollHeight; return div.id; }
         function removeMessage(id) { const el = document.getElementById(id); if (el) el.remove(); }
         function processAIResponse(query) {
-            // Simplified for brevity - full logic preserved in memory
             const cleanQuery = query.toLowerCase();
             const items = Object.values(itemMap);
             const matches = items.filter(i => i.name.toLowerCase().includes(cleanQuery) || i.tags.some(t=>t.toLowerCase().includes(cleanQuery)));
             if(matches.length > 0) {
                 addMessage(`Found ${matches[0].name}!`, 'ai');
-                // Use existing addCardToChat logic (simplified here)
                 const cardDiv = document.createElement('div');
                 cardDiv.className = 'ml-10 mb-2 p-3 bg-slate-800/50 border border-slate-700 rounded-xl max-w-[80%]';
                 cardDiv.innerHTML = `<span class="font-bold text-white text-sm">${matches[0].name}</span><a href="${matches[0].downloadLink}" class="block mt-2 text-center bg-blue-600 text-white text-xs py-2 rounded">Download</a>`;
@@ -850,7 +931,6 @@
             } else { addMessage("No matches found.", 'ai'); }
         }
 
-        // INIT
         document.addEventListener('DOMContentLoaded', initSystem);
     </script>
 </body>
