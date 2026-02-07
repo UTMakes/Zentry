@@ -78,6 +78,16 @@
             0%, 80%, 100% { transform: scale(0); }
             40% { transform: scale(1); }
         }
+        /* Modal Animation */
+        .modal-enter {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        .modal-enter-active {
+            opacity: 1;
+            transform: scale(1);
+            transition: all 0.2s ease-out;
+        }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col relative">
@@ -94,7 +104,8 @@
                     <div class="ml-10 flex items-baseline space-x-4">
                         <a href="#software" class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">Software</a>
                         <a href="#games" class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">Games</a>
-                        <a href="#about" class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">About</a>
+                        <!-- UPDATED: About button now opens modal -->
+                        <button onclick="toggleAbout()" class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">About</button>
                         <a href="https://github.com/yourusername" target="_blank" class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">GitHub</a>
                     </div>
                 </div>
@@ -136,6 +147,72 @@
 
         </div>
     </div>
+
+    <!-- ABOUT MODAL START -->
+    <div id="about-modal" class="fixed inset-0 z-[100] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity" onclick="toggleAbout()"></div>
+        
+        <!-- Modal Panel -->
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                <div class="relative transform overflow-hidden rounded-2xl bg-slate-800 border border-slate-700 text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg modal-enter-active">
+                    <div class="bg-slate-800 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                        <!-- Modal Header -->
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-blue-600/20 p-2.5 rounded-xl border border-blue-500/20">
+                                    <i class="ph-fill ph-cube text-blue-500 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white">About Zentry</h3>
+                                    <p class="text-xs text-slate-400">Version 2.0</p>
+                                </div>
+                            </div>
+                            <button onclick="toggleAbout()" class="text-slate-400 hover:text-white transition p-1 rounded-lg hover:bg-slate-700">
+                                <i class="ph-bold ph-x text-xl"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Modal Content -->
+                        <div class="space-y-5 text-slate-300">
+                            <p class="leading-relaxed">
+                                Zentry is a community-driven hub designed to simplify how developers and gamers share their creations. We believe in open access and high performance.
+                            </p>
+                            
+                            <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700/50">
+                                <h4 class="text-white font-semibold mb-2 flex items-center gap-2 text-sm uppercase tracking-wider">
+                                    <i class="ph-fill ph-rocket text-blue-500"></i> Our Mission
+                                </h4>
+                                <p class="text-sm text-slate-400">
+                                    To provide a secure, fast, and no-nonsense platform for hosting utilities and indie games without the bloat of major stores.
+                                </p>
+                            </div>
+
+                            <div class="pt-2">
+                                <h4 class="text-white font-semibold mb-3 text-sm">Connect With Us</h4>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <a href="#" class="flex items-center gap-2 text-sm p-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 hover:text-white transition border border-slate-700 hover:border-slate-600">
+                                        <i class="ph-fill ph-github-logo text-lg"></i> GitHub
+                                    </a>
+                                    <a href="#" class="flex items-center gap-2 text-sm p-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 hover:text-white transition border border-slate-700 hover:border-slate-600">
+                                        <i class="ph-fill ph-twitter-logo text-lg text-blue-400"></i> Twitter
+                                    </a>
+                                    <a href="#" class="flex items-center gap-2 text-sm p-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 hover:text-white transition border border-slate-700 hover:border-slate-600">
+                                        <i class="ph-fill ph-discord-logo text-lg text-indigo-400"></i> Discord
+                                    </a>
+                                    <a href="mailto:contact@zentry.com" class="flex items-center gap-2 text-sm p-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 hover:text-white transition border border-slate-700 hover:border-slate-600">
+                                        <i class="ph-fill ph-envelope-simple text-lg text-emerald-400"></i> Contact
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ABOUT MODAL END -->
 
     <!-- AI WIDGET START -->
     <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4">
@@ -319,6 +396,12 @@
         // ==========================================
         // ⚙️ SYSTEM LOGIC
         // ==========================================
+
+        // New About Toggle Function
+        function toggleAbout() {
+            const modal = document.getElementById('about-modal');
+            modal.classList.toggle('hidden');
+        }
 
         function createCardHtml(product) {
             const isReady = product.downloadLink !== "#";
