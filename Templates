@@ -1,11 +1,44 @@
-Downloader template: 
-{
-    name: "My New File",
-    version: "v1.0",
-    description: "Short description of what this does.",
-    icon: "ph-file",  // See https://phosphoricons.com/ for icon names
-    tags: ["Tag1", "Tag2"],
-    downloadLink: "./downloads/myfile.zip",
-    size: "10 MB",
-    isNew: true       // Set to true to show a "NEW" badge
-},
+       // ==========================================
+        // 🚀 ZENTRY DATA CENTER
+        // Manage your files and categories below
+        // ==========================================
+
+        /* ----------------------------------------------------
+           TEMPLATE 1: ADD A SINGLE FILE
+           Paste this inside an 'items' list
+           ----------------------------------------------------
+           {
+               name: "My New File",
+               version: "v1.0",
+               description: "Short description.",
+               icon: "ph-file",
+               tags: ["Tag1"],
+               downloadLink: "./downloads/myfile.zip",
+               size: "10 MB",
+               isNew: true
+           },
+
+           ----------------------------------------------------
+           TEMPLATE 2: ADD A NEW SUBSECTION
+           Paste this inside a 'subsections' list
+           ----------------------------------------------------
+           {
+               title: "My New Subsection",
+               items: [
+                   // Paste TEMPLATE 1 here for your first file
+               ]
+           },
+
+           ----------------------------------------------------
+           TEMPLATE 3: ADD A NEW MAIN SECTION
+           Paste this at the bottom of the 'catalog' list
+           ----------------------------------------------------
+           {
+               id: "unique-id", // e.g., "music"
+               title: "My New Section",
+               description: "Description of this entire category.",
+               subsections: [
+                   // Paste TEMPLATE 2 here
+               ]
+           },
+        */
