@@ -401,68 +401,66 @@
         
         // UPGRADED DATA STRUCTURE with Requirements
         const catalog = [
+    {
+        id: "games",
+        title: "Games",
+        description: "The best mods, scripts, and clients for your favorite sandbox games.",
+        subsections: [
             {
-                id: "games",
-                title: "Games",
-                description: "The best mods, scripts, and clients for your favorite sandbox games.",
-                subsections: [
+                title: "Minecraft",
+                items: [
                     {
-                        title: "Minecraft",
-                        items: [
-                            {
-                                id: "mc_modpack_01",
-                                name: "NexusClient1.21",
-                                version: "V1.0",
-                                type: "File", // NEW FIELD
-                                description: "A high-fidelity modpack completely overhauling textures and lighting.",
-                                longDescription: "Experience Minecraft like never before.",
-                                author: "Zentry Team",
-                                downloads: 0,
-                                icon: "ph-cube",
-                                tags: ["Minecraft", "Modpacks"],
-                                downloadLink: "downloads/NexusClient1.21.zip",
-                                size: "149 KB",
-                                isNew: true,
-                                requirements: {
-                                    os: "Any",
-                                    processor: "N/A",
-                                    ram: "16 GB",
-                                    graphics: "N/A"
-                                }
-                            }
-                            }
-                        ]
-                    },
+                        id: "mc_modpack_01",
+                        name: "NexusClient1.21",
+                        version: "V1.0",
+                        type: "File",
+                        description: "A high-fidelity modpack completely overhauling textures and lighting.",
+                        longDescription: "Experience Minecraft like never before.",
+                        author: "Zentry Team",
+                        downloads: 0,
+                        icon: "ph-cube",
+                        tags: ["Minecraft", "Modpacks"],
+                        downloadLink: "downloads/NexusClient1.21.zip",
+                        size: "149 KB",
+                        isNew: true,
+                        requirements: {
+                            os: "Any",
+                            processor: "N/A",
+                            ram: "16 GB",
+                            graphics: "N/A"
+                        }
+                    }
+                ]
+            },
+            {
+                title: "Roblox",
+                items: [
                     {
-                        title: "Roblox",
-                        items: [
-                            {
-                                id: "Bloxstrap",
-                                name: "Bloxstrap",
-                                version: "v2.10",
-                                type: "BootLoader", // NEW FIELD
-                                description: "Custom bootloader for roblox.",
-                                longDescription: "Get more features and customize the ways that roblox is booted",
-                                author: "BloxStraplabs",
-                                downloads: 0,
-                                icon: "ph-code",
-                                tags: ["Roblox",],
-                                downloadLink: "downloads/Bloxstrap-v2.10.0.exe"
-                                size: "12 MB",
-                                isNew: true,
-                                requirements: {
-                                    os: "Windows 10/11",
-                                    processor: "N/A",
-                                    ram: "N/A",
-                                    graphics: "N/A"
-                                }
-                            },}
-                            }
-                        ]
+                        id: "Bloxstrap",
+                        name: "Bloxstrap",
+                        version: "v2.10",
+                        type: "BootLoader",
+                        description: "Custom bootloader for roblox.",
+                        longDescription: "Get more features and customize the ways that roblox is booted",
+                        author: "BloxStraplabs",
+                        downloads: 0,
+                        icon: "ph-code",
+                        tags: ["Roblox"],
+                        downloadLink: "downloads/Bloxstrap-v2.10.0.exe",
+                        size: "12 MB",
+                        isNew: true,
+                        requirements: {
+                            os: "Windows 10/11",
+                            processor: "N/A",
+                            ram: "N/A",
+                            graphics: "N/A"
+                        }
                     }
                 ]
             }
-        ];
+        ]
+    }
+];
 
         // Global map for easy item lookup by ID
         let itemMap = {};
