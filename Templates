@@ -1,0 +1,11 @@
+Downloader template: 
+{
+    name: "My New File",
+    version: "v1.0",
+    description: "Short description of what this does.",
+    icon: "ph-file",  // See https://phosphoricons.com/ for icon names
+    tags: ["Tag1", "Tag2"],
+    downloadLink: "./downloads/myfile.zip",
+    size: "10 MB",
+    isNew: true       // Set to true to show a "NEW" badge
+},
