@@ -402,154 +402,61 @@
         // UPGRADED DATA STRUCTURE with Requirements
         const catalog = [
             {
-                id: "software",
-                title: "Software & Utilities",
-                description: "Essential tools for productivity and development.",
+                id: "games",
+                title: "Games",
+                description: "The best mods, scripts, and clients for your favorite sandbox games.",
                 subsections: [
                     {
-                        title: "System Tools",
+                        title: "Minecraft",
                         items: [
                             {
-                                id: "fm01",
-                                name: "Zentry File Manager",
-                                version: "v1.2.0",
-                                description: "A lightweight, blazing fast file explorer for Windows and Linux.",
-                                longDescription: "Zentry FM is designed to replace your default explorer with a tab-based, dual-pane interface. It supports FTP, SCP, and cloud drives out of the box. Includes a built-in terminal and code editor.",
+                                id: "mc_modpack_01",
+                                name: "NexusClient1.21",
+                                version: "V1.0",
+                                type: "File", // NEW FIELD
+                                description: "A high-fidelity modpack completely overhauling textures and lighting.",
+                                longDescription: "Experience Minecraft like never before.",
                                 author: "Zentry Team",
-                                downloads: 12500,
-                                icon: "ph-folder-notch-open",
-                                tags: ["Utility", "System"],
-                                downloadLink: "./downloads/zentry-fm-setup.exe",
-                                size: "14 MB",
-                                isNew: false,
-                                requirements: {
-                                    os: "Windows 10/11 or Linux",
-                                    processor: "Dual Core 1.2GHz",
-                                    ram: "2 GB",
-                                    graphics: "Integrated Graphics"
-                                }
-                            },
-                            {
-                                id: "opt01",
-                                name: "PixelOptimizer",
-                                version: "v0.9.0",
-                                description: "Lossless image compression tool for web developers.",
-                                longDescription: "Reduce image file sizes by up to 80% without losing quality. Supports PNG, JPG, WebP, and AVIF. Batch processing enabled.",
-                                author: "PixelLabs",
-                                downloads: 4200,
-                                icon: "ph-image",
-                                tags: ["Graphics", "Web"],
-                                downloadLink: "#",
-                                size: "8 MB",
+                                downloads: 0,
+                                icon: "ph-cube",
+                                tags: ["Minecraft", "Modpacks"],
+                                downloadLink: "downloads/NexusClient1.21.zip",
+                                size: "149 KB",
                                 isNew: true,
                                 requirements: {
-                                    os: "Windows, macOS, or Linux",
-                                    processor: "Any Modern CPU",
-                                    ram: "1 GB",
+                                    os: "Any",
+                                    processor: "N/A",
+                                    ram: "16 GB",
                                     graphics: "N/A"
                                 }
                             }
+                            }
                         ]
                     },
                     {
-                        title: "Developer Kits",
+                        title: "Roblox",
                         items: [
-                             {
-                                id: "code01",
-                                name: "CodeSnippet Pro",
-                                version: "v2.0.5",
-                                description: "Organize your code snippets with cloud sync.",
-                                longDescription: "Never lose a function again. CodeSnippet Pro lets you save, tag, and search your code library instantly. VS Code extension included.",
-                                author: "DevCorp",
-                                downloads: 8900,
+                            {
+                                id: "Bloxstrap",
+                                name: "Bloxstrap",
+                                version: "v2.10",
+                                type: "BootLoader", // NEW FIELD
+                                description: "Custom bootloader for roblox.",
+                                longDescription: "Get more features and customize the ways that roblox is booted",
+                                author: "BloxStraplabs",
+                                downloads: 0,
                                 icon: "ph-code",
-                                tags: ["DevTool"],
-                                downloadLink: "#",
-                                size: "45 MB",
-                                isNew: false,
-                                requirements: {
-                                    os: "Cross-platform",
-                                    processor: "Dual Core",
-                                    ram: "4 GB",
-                                    graphics: "Integrated"
-                                }
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                id: "games",
-                title: "Games",
-                description: "Indie projects and demos available for download.",
-                subsections: [
-                    {
-                        title: "Action / Arcade",
-                        items: [
-                            {
-                                id: "game01",
-                                name: "Neon Racer",
-                                version: "v1.0.0",
-                                description: "A high-speed cyberpunk racing game with synthwave beats.",
-                                longDescription: "Race through 12 neon-soaked tracks in this adrenaline-pumping arcade racer. Features local multiplayer, leaderboard support, and an original synthwave soundtrack.",
-                                author: "NightStudio",
-                                downloads: 15600, 
-                                icon: "ph-car-profile",
-                                tags: ["Racing", "Indie"],
-                                downloadLink: "#",
-                                size: "250 MB",
-                                isNew: false,
-                                requirements: {
-                                    os: "Windows 10 (64-bit)",
-                                    processor: "Intel i5 or equivalent",
-                                    ram: "8 GB",
-                                    graphics: "GTX 1050 or better"
-                                }
-                            },
-                            {
-                                id: "game02",
-                                name: "Space Defender",
-                                version: "Alpha 0.4",
-                                description: "Classic arcade shooter with modern physics.",
-                                longDescription: "Defend Earth from wave after wave of alien invaders. Physics-based destruction and upgradeable ships make every run unique.",
-                                author: "RetroDev",
-                                downloads: 2100,
-                                icon: "ph-rocket",
-                                tags: ["Arcade", "Space"],
-                                downloadLink: "#",
-                                size: "120 MB",
+                                tags: ["Roblox",],
+                                downloadLink: "downloads/Bloxstrap-v2.10.0.exe"
+                                size: "12 MB",
                                 isNew: true,
                                 requirements: {
-                                    os: "Windows 10",
-                                    processor: "Intel i3",
-                                    ram: "4 GB",
-                                    graphics: "Integrated Graphics"
+                                    os: "Windows 10/11",
+                                    processor: "N/A",
+                                    ram: "N/A",
+                                    graphics: "N/A"
                                 }
-                            }
-                        ]
-                    },
-                    {
-                        title: "RPG & Adventure",
-                        items: [
-                            {
-                                id: "rpg01",
-                                name: "Crystal Quest",
-                                version: "Demo",
-                                description: "Explore a pixel-art world in search of ancient relics.",
-                                longDescription: "A turn-based RPG with a deep story and hand-crafted pixel art. This demo contains the first 2 hours of gameplay.",
-                                author: "QuestGames",
-                                downloads: 6700,
-                                icon: "ph-sword",
-                                tags: ["RPG", "Pixel Art"],
-                                downloadLink: "#",
-                                size: "450 MB",
-                                isNew: false,
-                                requirements: {
-                                    os: "Windows 10 / macOS",
-                                    processor: "Dual Core 2.0GHz",
-                                    ram: "4 GB",
-                                    graphics: "OpenGL 3.0 Compatible"
-                                }
+                            },}
                             }
                         ]
                     }
@@ -627,11 +534,11 @@
             const item = itemMap[itemId];
             if (!item) return;
 
-            // RELATED APPS LOGIC: Find 2 other items sharing at least 1 tag
+            // RELATED APPS LOGIC
             const relatedApps = allItemsList.filter(other => 
-                other.id !== item.id && // Not self
-                other.tags.some(tag => item.tags.includes(tag)) // Shares a tag
-            ).slice(0, 2); // Take top 2
+                other.id !== item.id && 
+                other.tags.some(tag => item.tags.includes(tag))
+            ).slice(0, 2); 
 
             let relatedAppsHtml = '';
             if (relatedApps.length > 0) {
@@ -662,6 +569,8 @@
             const btnClass = isReady ? "bg-blue-600 hover:bg-blue-700" : "bg-slate-700 cursor-not-allowed";
             const btnText = isReady ? "Download Now" : "Coming Soon";
             const reqs = item.requirements || { os: "N/A", processor: "N/A", ram: "N/A", graphics: "N/A" };
+            // Default type if missing
+            const itemType = item.type || "File";
 
             modalContent.innerHTML = `
                 <div class="relative">
@@ -677,7 +586,7 @@
                         <div class="flex justify-between items-start mb-6">
                             <div>
                                 <h2 class="text-3xl font-bold text-white mb-1">${item.name}</h2>
-                                <p class="text-slate-400 text-sm">by <span class="text-blue-400">${item.author}</span> &bull; ${item.version}</p>
+                                <p class="text-slate-400 text-sm">by <span class="text-blue-400">${item.author}</span> &bull; <span class="text-slate-300 font-semibold bg-slate-800 px-1.5 rounded text-xs">${itemType}</span> &bull; ${item.version}</p>
                             </div>
                             <div class="text-right">
                                 <div class="flex items-center gap-1 text-yellow-400 text-sm font-bold mb-1">
@@ -693,7 +602,7 @@
                                 ${item.longDescription}
                             </p>
 
-                            <!-- NEW: System Requirements Grid -->
+                            <!-- System Requirements Grid -->
                             <div>
                                 <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">System Requirements</h4>
                                 <div class="grid grid-cols-2 gap-4 text-sm">
@@ -725,7 +634,7 @@
                                 </a>
                             </div>
 
-                            <!-- NEW: Related Apps -->
+                            <!-- Related Apps -->
                             ${relatedAppsHtml}
                         </div>
                     </div>
@@ -753,6 +662,7 @@
                 ? "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-900/20" 
                 : "bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700";
             const buttonText = isReady ? "Download" : "Soon";
+            const itemType = product.type || "File";
             
             let badgeHtml = '';
             if (product.isTrending) {
@@ -768,7 +678,8 @@
                         <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 group-hover:border-blue-500/50 transition-colors">
                             <i class="ph ${product.icon} text-2xl text-blue-400"></i>
                         </div>
-                        <div class="text-right">
+                        <div class="text-right flex flex-col items-end">
+                             <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">${itemType}</span>
                              <span class="bg-slate-800 text-slate-400 text-xs px-2 py-1 rounded-md border border-slate-700 font-mono block mb-1">${product.version}</span>
                              <div class="flex justify-end gap-0.5 opacity-80">
                                 ${getStarRating(product.rating)}
