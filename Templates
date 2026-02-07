@@ -7,16 +7,21 @@
            TEMPLATE 1: ADD A SINGLE FILE
            Paste this inside an 'items' list
            ----------------------------------------------------
-           {
-               name: "My New File",
-               version: "v1.0",
-               description: "Short description.",
-               icon: "ph-file",
-               tags: ["Tag1"],
-               downloadLink: "./downloads/myfile.zip",
-               size: "10 MB",
-               isNew: true
-           },
+               {
+                  id: "unique_id_here",      // MUST be unique (e.g., "game03")
+                  name: "Name of Product",
+                  version: "v1.0",
+                  description: "Short summary for the card view.",
+                  longDescription: "The full description that appears when the user clicks the card. You can write a lot here!",
+                  author: "Developer Name",
+                  downloads: 0,              // Set this number. Highest number automatically gets "HOT" badge.
+                  icon: "ph-rocket",         // Icon name from Phosphor Icons
+                  tags: ["Tag1", "Tag2"],
+                  downloadLink: "./downloads/filename.zip", 
+                  size: "15 MB",
+                  isNew: true                // Set to true for the "NEW" badge
+},
+
 
            ----------------------------------------------------
            TEMPLATE 2: ADD A NEW SUBSECTION
