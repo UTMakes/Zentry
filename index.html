@@ -109,16 +109,63 @@
             position: absolute; /* Prevent taking up space */
             pointer-events: none;
         }
+        
+        /* Toast Notification Styles */
+        #toast-container {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+        .toast {
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: auto;
+        }
+        .toast.success i { color: #34d399; }
+        .toast.info i { color: #60a5fa; }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Favorite Button Animation */
+        .heart-btn { transition: transform 0.2s; }
+        .heart-btn:active { transform: scale(0.8); }
+        .heart-btn.active i {
+            color: #ef4444; /* Red color */
+            font-weight: bold; /* Filled icon weight in Phosphor */
+        }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col relative">
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
 
     <!-- Announcement Banner -->
     <div id="announcement-banner" class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white relative z-[60]">
         <div class="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <span class="bg-white/20 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider">New</span>
-                <p class="text-sm font-medium">Zentry v2.0 is live! Check out the new AI Assistant and Rating system.</p>
+                <p class="text-sm font-medium">Zentry v1.0 is live! Check out the new AI Assistant and Rating system.</p>
             </div>
             <button onclick="closeBanner()" class="text-white/80 hover:text-white transition p-1 hover:bg-white/10 rounded">
                 <i class="ph-bold ph-x"></i>
@@ -237,6 +284,7 @@
                 <!-- Category Filters (Pills) -->
                 <div class="flex flex-wrap gap-2 justify-center" id="filter-container">
                     <button onclick="applyCategoryFilter('all')" class="filter-pill active px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700">All</button>
+                    <button onclick="applyCategoryFilter('favorites')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 text-pink-400"><i class="ph-fill ph-heart mr-1"></i> Favorites</button>
                     <button onclick="applyCategoryFilter('software')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700">Software</button>
                     <button onclick="applyCategoryFilter('games')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700">Games</button>
                     <button onclick="applyCategoryFilter('devtool')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700">DevTools</button>
@@ -401,70 +449,71 @@
         
         // UPGRADED DATA STRUCTURE with Requirements
         const catalog = [
-    {
-        id: "games",
-        title: "Games",
-        description: "The best mods, scripts, and clients for your favorite sandbox games.",
-        subsections: [
             {
-                title: "Minecraft",
-                items: [
+                id: "games",
+                title: "Games",
+                description: "The best mods, scripts, and clients for your favorite sandbox games.",
+                subsections: [
                     {
-                        id: "mc_modpack_01",
-                        name: "NexusClient1.21",
-                        version: "V1.0",
-                        type: "File",
-                        description: "A high-fidelity modpack completely overhauling textures and lighting.",
-                        longDescription: "Experience Minecraft like never before.",
-                        author: "Zentry Team",
-                        downloads: 0,
-                        icon: "ph-cube",
-                        tags: ["Minecraft", "Modpacks"],
-                        downloadLink: "downloads/NexusClient1.21.zip",
-                        size: "149 KB",
-                        isNew: true,
-                        requirements: {
-                            os: "Any",
-                            processor: "N/A",
-                            ram: "16 GB",
-                            graphics: "N/A"
-                        }
-                    }
-                ]
-            },
-            {
-                title: "Roblox",
-                items: [
+                        title: "Minecraft",
+                        items: [
+                            {
+                                id: "mc_modpack_01",
+                                name: "NexusClient1.21",
+                                version: "V1.0",
+                                type: "File",
+                                description: "A high-fidelity modpack completely overhauling textures and lighting.",
+                                longDescription: "Experience Minecraft like never before.",
+                                author: "Zentry Team",
+                                downloads: 0,
+                                icon: "ph-cube",
+                                tags: ["Minecraft", "Modpacks"],
+                                downloadLink: "downloads/NexusClient1.21.zip",
+                                size: "149 KB",
+                                isNew: true,
+                                requirements: {
+                                    os: "Any",
+                                    processor: "N/A",
+                                    ram: "16 GB",
+                                    graphics: "N/A"
+                                }
+                            }
+                        ]
+                    },
                     {
-                        id: "Bloxstrap",
-                        name: "Bloxstrap",
-                        version: "v2.10",
-                        type: "BootLoader",
-                        description: "Custom bootloader for roblox.",
-                        longDescription: "Get more features and customize the ways that roblox is booted",
-                        author: "BloxStraplabs",
-                        downloads: 0,
-                        icon: "ph-code",
-                        tags: ["Roblox"],
-                        downloadLink: "downloads/Bloxstrap-v2.10.0.exe",
-                        size: "12 MB",
-                        isNew: true,
-                        requirements: {
-                            os: "Windows 10/11",
-                            processor: "N/A",
-                            ram: "N/A",
-                            graphics: "N/A"
-                        }
+                        title: "Roblox",
+                        items: [
+                            {
+                                id: "Bloxstrap",
+                                name: "Bloxstrap",
+                                version: "v2.10",
+                                type: "BootLoader",
+                                description: "Custom bootloader for roblox.",
+                                longDescription: "Get more features and customize the ways that roblox is booted",
+                                author: "BloxStraplabs",
+                                downloads: 0,
+                                icon: "ph-code",
+                                tags: ["Roblox"],
+                                downloadLink: "downloads/Bloxstrap-v2.10.0.exe",
+                                size: "12 MB",
+                                isNew: true,
+                                requirements: {
+                                    os: "Windows 10/11",
+                                    processor: "N/A",
+                                    ram: "N/A",
+                                    graphics: "N/A"
+                                }
+                            }
+                        ]
                     }
                 ]
             }
-        ]
-    }
-];
+        ];
 
         // Global map for easy item lookup by ID
         let itemMap = {};
         let allItemsList = [];
+        let userFavorites = JSON.parse(localStorage.getItem('zentry_favorites') || '[]');
 
         // ==========================================
         // ⚙️ SYSTEM LOGIC
@@ -494,19 +543,108 @@
             
             // 3. Identify the Top Item (Max Downloads)
             const topItem = sortedByDownloads[0];
-            const maxDownloads = topItem.downloads;
+            const maxDownloads = topItem.downloads || 1; // Prevent division by zero
 
             // 4. Assign Properties (Automatic Ratings & Trending)
             allItemsList.forEach(item => {
-                // UNIQUE TRENDING: Only the single highest downloaded item gets the badge
                 item.isTrending = (item.id === topItem.id);
-                // AUTOMATIC RATING
                 const popularityRatio = item.downloads / maxDownloads;
                 const autoRating = 3.5 + (1.5 * popularityRatio);
                 item.rating = autoRating.toFixed(1);
             });
 
             renderCatalog();
+        }
+
+        // --- NEW: Toast Notification System ---
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            let icon = type === 'success' ? 'ph-check-circle' : 'ph-info';
+            if (type === 'download') icon = 'ph-download-simple';
+            
+            toast.innerHTML = `<i class="ph-fill ${icon} text-lg"></i> <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // --- NEW: Favorites System ---
+        function toggleFavorite(event, itemId) {
+            event.stopPropagation(); // Prevent opening modal
+            const btn = event.currentTarget;
+            
+            if (userFavorites.includes(itemId)) {
+                userFavorites = userFavorites.filter(id => id !== itemId);
+                btn.classList.remove('active');
+                btn.innerHTML = '<i class="ph-bold ph-heart text-slate-500 hover:text-pink-500 transition-colors"></i>';
+                showToast("Removed from favorites");
+            } else {
+                userFavorites.push(itemId);
+                btn.classList.add('active');
+                btn.innerHTML = '<i class="ph-fill ph-heart text-pink-500"></i>';
+                showToast("Added to favorites", "success");
+            }
+            localStorage.setItem('zentry_favorites', JSON.stringify(userFavorites));
+            
+            // Re-render if currently viewing favorites filter
+            const activeFilter = document.querySelector('.filter-pill.active');
+            if (activeFilter && activeFilter.innerText.includes('Favorites')) {
+                applyCategoryFilter('favorites');
+            }
+        }
+
+        // --- NEW: Download Handler (1 Second Delay) ---
+        function handleDownload(event, url, itemName) {
+            event.stopPropagation(); // Prevent modal if clicking button inside card
+            event.preventDefault(); // Stop immediate download
+
+            if (url === "#") {
+                showToast("This item is not available yet.", "info");
+                return;
+            }
+
+            // 1. Immediate Toast Notification
+            showToast(`Starting download for ${itemName}...`, "download");
+
+            const btn = event.currentTarget;
+            const originalContent = btn.innerHTML;
+            const originalWidth = btn.offsetWidth; // Keep button width fixed
+
+            // 2. Loading State (Button)
+            btn.style.width = `${originalWidth}px`;
+            btn.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i> Wait...`;
+            btn.classList.add('cursor-wait', 'opacity-80');
+            
+            // 3. Delay Logic
+            setTimeout(() => {
+                // 4. Success State
+                btn.innerHTML = `<i class="ph-bold ph-check"></i> Done`;
+                
+                // 5. Trigger Actual Download
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = url.split('/').pop();
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // 6. Reset Button after short delay
+                setTimeout(() => {
+                    btn.innerHTML = originalContent;
+                    btn.classList.remove('cursor-wait', 'opacity-80');
+                    btn.style.width = '';
+                }, 1500);
+
+            }, 1000); // 1000ms = 1 second delay
         }
 
         // Banner Functions
@@ -565,19 +703,29 @@
             const modalContent = document.getElementById('product-modal-content');
             const isReady = item.downloadLink !== "#";
             const btnClass = isReady ? "bg-blue-600 hover:bg-blue-700" : "bg-slate-700 cursor-not-allowed";
-            const btnText = isReady ? "Download Now" : "Coming Soon";
             const reqs = item.requirements || { os: "N/A", processor: "N/A", ram: "N/A", graphics: "N/A" };
-            // Default type if missing
             const itemType = item.type || "File";
+
+            // CHECK FAVORITE STATUS FOR MODAL
+            const isFav = userFavorites.includes(item.id);
+            const favIconClass = isFav ? "ph-fill ph-heart text-pink-500" : "ph-bold ph-heart text-slate-400";
 
             modalContent.innerHTML = `
                 <div class="relative">
                     <!-- Header Image / Icon Area -->
-                    <div class="h-32 bg-gradient-to-r from-blue-900/50 to-slate-900 border-b border-slate-700 flex items-center justify-center">
+                    <div class="h-32 bg-gradient-to-r from-blue-900/50 to-slate-900 border-b border-slate-700 flex items-center justify-center relative">
                         <i class="ph ${item.icon} text-6xl text-blue-400 drop-shadow-lg"></i>
-                        <button onclick="closeProductModal()" class="absolute top-4 right-4 bg-black/30 hover:bg-black/50 text-white rounded-full p-2 transition">
-                            <i class="ph-bold ph-x text-lg"></i>
-                        </button>
+                        
+                        <!-- Modal Controls -->
+                        <div class="absolute top-4 right-4 flex gap-2">
+                            <button onclick="toggleFavorite(event, '${item.id}'); this.innerHTML = userFavorites.includes('${item.id}') ? '<i class=\\'ph-fill ph-heart text-pink-500\\'></i>' : '<i class=\\'ph-bold ph-heart text-white\\'></i>'" 
+                                    class="bg-black/30 hover:bg-black/50 text-white rounded-full p-2 transition heart-btn">
+                                <i class="${favIconClass} text-lg"></i>
+                            </button>
+                            <button onclick="closeProductModal()" class="bg-black/30 hover:bg-black/50 text-white rounded-full p-2 transition">
+                                <i class="ph-bold ph-x text-lg"></i>
+                            </button>
+                        </div>
                     </div>
                     
                     <div class="p-8 bg-slate-900">
@@ -627,9 +775,9 @@
                                 <div class="flex gap-2">
                                      ${item.tags.map(tag => `<span class="text-xs text-slate-400 bg-slate-800 px-2 py-1 rounded border border-slate-700">${tag}</span>`).join('')}
                                 </div>
-                                <a href="${item.downloadLink}" class="${btnClass} text-white px-8 py-3 rounded-xl font-bold transition flex items-center gap-2 shadow-lg shadow-blue-900/20">
-                                    <i class="ph-bold ph-download-simple"></i> ${btnText}
-                                </a>
+                                <button onclick="handleDownload(event, '${item.downloadLink}', '${item.name}')" class="${btnClass} text-white px-8 py-3 rounded-xl font-bold transition flex items-center gap-2 shadow-lg shadow-blue-900/20 text-center justify-center min-w-[160px]">
+                                    <i class="ph-bold ph-download-simple"></i> Download Now
+                                </button>
                             </div>
 
                             <!-- Related Apps -->
@@ -662,6 +810,13 @@
             const buttonText = isReady ? "Download" : "Soon";
             const itemType = product.type || "File";
             
+            // Check Favorite Status
+            const isFav = userFavorites.includes(product.id);
+            const favClass = isFav ? "active" : "";
+            const favIcon = isFav 
+                ? '<i class="ph-fill ph-heart text-pink-500"></i>' 
+                : '<i class="ph-bold ph-heart text-slate-500 hover:text-pink-500 transition-colors"></i>';
+            
             let badgeHtml = '';
             if (product.isTrending) {
                 badgeHtml = `<span class="absolute -top-2 -right-2 bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg shadow-orange-500/20 border border-orange-400 z-10 flex items-center gap-1 animate-pulse"><i class="ph-fill ph-fire"></i> HOT</span>`;
@@ -676,14 +831,17 @@
                         <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 group-hover:border-blue-500/50 transition-colors">
                             <i class="ph ${product.icon} text-2xl text-blue-400"></i>
                         </div>
-                        <div class="text-right flex flex-col items-end">
-                             <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">${itemType}</span>
-                             <span class="bg-slate-800 text-slate-400 text-xs px-2 py-1 rounded-md border border-slate-700 font-mono block mb-1">${product.version}</span>
-                             <div class="flex justify-end gap-0.5 opacity-80">
-                                ${getStarRating(product.rating)}
+                        <div class="flex flex-col items-end gap-1">
+                             <div class="flex gap-2 items-center">
+                                 <button onclick="toggleFavorite(event, '${product.id}')" class="heart-btn ${favClass} p-1 rounded-full hover:bg-slate-800 transition">
+                                    ${favIcon}
+                                 </button>
+                                 <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">${itemType}</span>
                              </div>
+                             <span class="bg-slate-800 text-slate-400 text-xs px-2 py-1 rounded-md border border-slate-700 font-mono block mb-1">${product.version}</span>
                         </div>
                     </div>
+                    
                     <h3 class="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors filter-name">${product.name}</h3>
                     <p class="text-slate-400 text-sm mb-6 flex-grow leading-relaxed filter-desc line-clamp-2">${product.description}</p>
                     
@@ -693,9 +851,9 @@
                     <div class="mt-auto pt-5 border-t border-slate-700/50 flex items-center justify-between">
                         <div class="text-xs text-slate-500 font-mono flex flex-col">
                             <span><i class="ph-fill ph-hard-drives"></i> ${product.size}</span>
-                            <span class="text-[10px] mt-0.5">${(product.downloads/1000).toFixed(1)}k DLs</span>
+                            <span class="flex items-center gap-1 mt-1 opacity-80">${getStarRating(product.rating)}</span>
                         </div>
-                        <button class="${buttonClass} px-4 py-2 rounded-lg text-sm font-semibold transition-all transform active:scale-95 flex items-center gap-2">
+                        <button onclick="handleDownload(event, '${product.downloadLink}', '${product.name}')" class="${buttonClass} px-4 py-2 rounded-lg text-sm font-semibold transition-all transform active:scale-95 flex items-center gap-2 justify-center min-w-[110px]">
                            <i class="ph-bold ph-download-simple"></i> ${buttonText}
                         </button>
                     </div>
@@ -746,14 +904,31 @@
                 }
             });
             const cards = document.querySelectorAll('.product-card');
-            cards.forEach(card => {
-                const catString = card.querySelector('.category-string').innerText;
-                if (category === 'all' || catString.includes(category)) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+            
+            // Handle Favorites Filter Special Case
+            if (category === 'favorites') {
+                cards.forEach(card => {
+                    // Extract ID from onclick attribute as a fallback since we don't store ID in DOM directly
+                    const onclickAttr = card.getAttribute('onclick');
+                    const idMatch = onclickAttr.match(/openProductModal\('([^']+)'\)/);
+                    if (idMatch && userFavorites.includes(idMatch[1])) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            } else {
+                // Standard Categories
+                cards.forEach(card => {
+                    const catString = card.querySelector('.category-string').innerText;
+                    if (category === 'all' || catString.includes(category)) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
             document.querySelectorAll('.subsection-wrapper').forEach(sub => {
                 const visibleCards = Array.from(sub.querySelectorAll('.product-card')).filter(c => c.style.display !== 'none');
                 sub.style.display = visibleCards.length > 0 ? 'block' : 'none';
@@ -764,6 +939,7 @@
             });
         }
 
+        // ... existing filterGrid code ...
         function filterGrid(term) {
             const searchTerm = term.toLowerCase();
             const sections = document.querySelectorAll('.section-wrapper');
