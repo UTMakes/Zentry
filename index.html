@@ -28,6 +28,9 @@
                             accent: '#3b82f6',
                             hover: '#2563eb'
                         }
+                    },
+                    animation: {
+                        'bounce-slow': 'bounce 3s infinite',
                     }
                 }
             }
@@ -55,9 +58,29 @@
         html {
             scroll-behavior: smooth;
         }
+        /* Chat Widget Animations */
+        .chat-enter {
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.3s ease-out;
+        }
+        .chat-enter-active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .typing-dot {
+            animation: typing 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
     </style>
 </head>
-<body class="antialiased min-h-screen flex flex-col">
+<body class="antialiased min-h-screen flex flex-col relative">
 
     <!-- Navigation -->
     <nav class="fixed w-full z-50 glass-effect border-b border-slate-700">
@@ -114,6 +137,60 @@
         </div>
     </div>
 
+    <!-- AI WIDGET START -->
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4">
+        
+        <!-- Chat Window (Hidden by default) -->
+        <div id="ai-chat-window" class="hidden w-80 md:w-96 glass-effect rounded-2xl border border-slate-700 shadow-2xl overflow-hidden flex flex-col h-[500px] transition-all duration-300 transform origin-bottom-right scale-95 opacity-0">
+            <!-- Header -->
+            <div class="bg-blue-600/90 p-4 flex justify-between items-center backdrop-blur-sm">
+                <div class="flex items-center gap-2">
+                    <i class="ph-fill ph-robot text-white text-xl"></i>
+                    <div>
+                        <h3 class="font-bold text-white text-sm">Zentry Assistant</h3>
+                        <p class="text-blue-100 text-xs">AI-Powered Search</p>
+                    </div>
+                </div>
+                <button onclick="toggleChat()" class="text-white hover:text-blue-200 transition">
+                    <i class="ph-bold ph-x"></i>
+                </button>
+            </div>
+            
+            <!-- Messages Area -->
+            <div id="chat-messages" class="flex-grow overflow-y-auto p-4 space-y-4 bg-slate-900/80">
+                <!-- Welcome Message -->
+                <div class="flex gap-2">
+                    <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
+                        <i class="ph-fill ph-robot text-white text-xs"></i>
+                    </div>
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl rounded-tl-none p-3 text-sm text-slate-300">
+                        Hello! I can help you find software or games. Try asking "Do you have any RPGs?" or "I need a coding tool."
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="p-3 bg-slate-800 border-t border-slate-700">
+                <form onsubmit="handleChatSubmit(event)" class="relative">
+                    <input type="text" id="chat-input" 
+                        class="w-full bg-slate-900 text-white text-sm rounded-full pl-4 pr-10 py-3 border border-slate-700 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 placeholder-slate-500"
+                        placeholder="Ask Zentry AI..." autocomplete="off">
+                    <button type="submit" class="absolute right-2 top-1.5 p-1.5 bg-blue-600 text-white rounded-full hover:bg-blue-500 transition">
+                        <i class="ph-bold ph-paper-plane-right"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Toggle Button -->
+        <button onclick="toggleChat()" class="group flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white p-4 rounded-full shadow-lg shadow-blue-900/50 transition-all hover:scale-110">
+            <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-300 ease-in-out text-sm font-bold">Ask AI</span>
+            <i class="ph-fill ph-chat-teardrop-text text-2xl"></i>
+        </button>
+    </div>
+    <!-- AI WIDGET END -->
+
+
     <!-- Footer -->
     <footer class="bg-slate-950 border-t border-slate-800" id="about">
         <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 md:flex md:items-center md:justify-between lg:px-8">
@@ -141,19 +218,6 @@
         // 🚀 ZENTRY DATA CENTER
         // Manage your files and categories below
         // ==========================================
-
-        /* --- COPY THIS TEMPLATE TO ADD A NEW FILE ---
-           {
-               name: "My New File",
-               version: "v1.0",
-               description: "Short description of what this does.",
-               icon: "ph-file",  // See https://phosphoricons.com/ for icon names
-               tags: ["Tag1", "Tag2"],
-               downloadLink: "./downloads/myfile.zip",
-               size: "10 MB",
-               isNew: true       // Set to true to show a "NEW" badge
-           },
-        */
 
         const catalog = [
             {
@@ -253,7 +317,7 @@
         ];
 
         // ==========================================
-        // ⚙️ SYSTEM LOGIC (Do not edit below)
+        // ⚙️ SYSTEM LOGIC
         // ==========================================
 
         function createCardHtml(product) {
@@ -263,7 +327,6 @@
                 : "bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700";
             const buttonText = isReady ? "Download" : "Soon";
             
-            // New Badge Logic
             const newBadge = product.isNew 
                 ? `<span class="absolute -top-2 -right-2 bg-green-500 text-slate-900 text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg shadow-green-500/20 border border-green-400">NEW</span>` 
                 : '';
@@ -303,13 +366,11 @@
             `;
         }
 
-        // Main Render Function
         function renderCatalog() {
             const container = document.getElementById('catalog-container');
-            container.innerHTML = ''; // Clear existing content
+            container.innerHTML = ''; 
             
             catalog.forEach(section => {
-                // Generate items HTML for each subsection
                 const subsectionsHtml = section.subsections.map(sub => {
                     const cardsHtml = sub.items.map(item => createCardHtml(item)).join('');
                     
@@ -326,7 +387,6 @@
                     `;
                 }).join('');
 
-                // Generate Main Section HTML
                 const sectionWrapper = `
                     <div id="${section.id}" class="mb-24 pt-8">
                         <div class="text-center mb-16 relative">
@@ -348,7 +408,272 @@
             });
         }
 
-        // Run on load
+        // ==========================================
+        // 🤖 AI ASSISTANT LOGIC
+        // ==========================================
+        
+        const chatWindow = document.getElementById('ai-chat-window');
+        const chatMessages = document.getElementById('chat-messages');
+        let isChatOpen = false;
+        
+        // NEW: Memory for search results
+        let lastSearchResults = [];
+        let lastSearchIndex = 0;
+
+        function toggleChat() {
+            isChatOpen = !isChatOpen;
+            if (isChatOpen) {
+                chatWindow.classList.remove('hidden');
+                // Small delay to allow display:block to apply before opacity transition
+                setTimeout(() => {
+                    chatWindow.classList.remove('scale-95', 'opacity-0');
+                    chatWindow.classList.add('scale-100', 'opacity-100');
+                    document.getElementById('chat-input').focus();
+                }, 10);
+            } else {
+                chatWindow.classList.remove('scale-100', 'opacity-100');
+                chatWindow.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    chatWindow.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        async function handleChatSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            // 1. Add User Message
+            addMessage(message, 'user');
+            input.value = '';
+
+            // 2. Show Typing Indicator
+            const typingId = addTypingIndicator();
+
+            // 3. Simulate "Thinking" Delay
+            setTimeout(() => {
+                removeMessage(typingId);
+                processAIResponse(message);
+            }, 800); // Slightly faster response time
+        }
+
+        function addMessage(text, sender) {
+            const div = document.createElement('div');
+            div.className = `flex gap-2 ${sender === 'user' ? 'flex-row-reverse' : ''}`;
+            
+            const avatar = sender === 'user' 
+                ? `<div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center flex-shrink-0"><i class="ph-fill ph-user text-slate-300 text-xs"></i></div>`
+                : `<div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0"><i class="ph-fill ph-robot text-white text-xs"></i></div>`;
+            
+            const bubbleStyle = sender === 'user'
+                ? 'bg-blue-600 text-white rounded-tr-none'
+                : 'bg-slate-800 border border-slate-700 text-slate-300 rounded-tl-none';
+
+            div.innerHTML = `
+                ${avatar}
+                <div class="${bubbleStyle} p-3 rounded-2xl text-sm max-w-[80%] shadow-md">
+                    ${text}
+                </div>
+            `;
+            
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return div.id = 'msg-' + Date.now();
+        }
+
+        function addCardToChat(item) {
+            const cardDiv = document.createElement('div');
+            cardDiv.className = 'ml-10 mb-2 p-3 bg-slate-800/50 border border-slate-700 rounded-xl max-w-[80%] animate-fade-in';
+            cardDiv.innerHTML = `
+                <div class="flex items-center gap-3 mb-2">
+                    <i class="ph ${item.icon} text-xl text-blue-400"></i>
+                    <span class="font-bold text-white text-sm">${item.name}</span>
+                </div>
+                <p class="text-xs text-slate-400 mb-3">${item.description}</p>
+                <a href="${item.downloadLink}" class="block text-center bg-blue-600 text-white text-xs py-2 rounded hover:bg-blue-500 transition">Download ${item.version}</a>
+            `;
+            chatMessages.appendChild(cardDiv);
+        }
+
+        function addTypingIndicator() {
+            const div = document.createElement('div');
+            div.className = 'flex gap-2';
+            div.id = 'typing-' + Date.now();
+            div.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0"><i class="ph-fill ph-robot text-white text-xs"></i></div>
+                <div class="bg-slate-800 border border-slate-700 p-3 rounded-2xl rounded-tl-none flex gap-1 items-center h-11">
+                    <div class="w-2 h-2 bg-slate-400 rounded-full typing-dot"></div>
+                    <div class="w-2 h-2 bg-slate-400 rounded-full typing-dot"></div>
+                    <div class="w-2 h-2 bg-slate-400 rounded-full typing-dot"></div>
+                </div>
+            `;
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return div.id;
+        }
+
+        function removeMessage(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        // Helper to show next batch of cached results
+        function showMoreResults() {
+            if (lastSearchResults.length <= lastSearchIndex) {
+                addMessage("That was everything I found for that search!", 'ai');
+                return;
+            }
+
+            const batchSize = 2; // How many to show at once
+            const nextBatch = lastSearchResults.slice(lastSearchIndex, lastSearchIndex + batchSize);
+            
+            addMessage(`Here are ${nextBatch.length} more results:`, 'ai');
+            nextBatch.forEach(item => addCardToChat(item));
+            
+            lastSearchIndex += nextBatch.length;
+            
+            if (lastSearchResults.length > lastSearchIndex) {
+                const remaining = lastSearchResults.length - lastSearchIndex;
+                addMessage(`Still ${remaining} hidden. Type <b>'more'</b> to see them.`, 'ai');
+            }
+        }
+
+        function processAIResponse(query) {
+            // 0. CHECK FOR "SHOW MORE" INTENT
+            // If the user says "more", "others", "show me", etc. AND we have hidden results
+            const lowerQuery = query.toLowerCase();
+            const isFollowUp = ['more', 'other', 'rest', 'show', 'next', 'see'].some(w => lowerQuery.includes(w));
+            
+            if (isFollowUp && lastSearchResults.length > lastSearchIndex) {
+                showMoreResults();
+                return;
+            }
+
+            // Flatten all items into one array for searching
+            // UPGRADE: Attach Section & Subsection titles to the item for better context
+            const allItems = [];
+            catalog.forEach(section => {
+                section.subsections.forEach(sub => {
+                    sub.items.forEach(item => {
+                        allItems.push({
+                            ...item,
+                            // We add a hidden 'context' field containing the category names
+                            contextKeywords: `${section.title} ${sub.title}` 
+                        });
+                    });
+                });
+            });
+
+            // 1. ADVANCED PROCESSING
+            const cleanQuery = lowerQuery.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+            
+            // Stop words to ignore
+            const stopWords = ['i', 'need', 'want', 'a', 'the', 'is', 'are', 'do', 'you', 'have', 'can', 'show', 'me', 'for', 'with', 'give', 'get', 'looking'];
+            
+            // SYNONYM LIBRARY - Teach the AI related words
+            const synonymMap = {
+                'coding': ['dev', 'development', 'code', 'programming', 'snippet', 'script'],
+                'creator': ['make', 'build', 'dev', 'create'],
+                'game': ['gaming', 'arcade', 'rpg', 'play', 'fun', 'shooter', 'action'],
+                'tool': ['utility', 'app', 'software', 'manager', 'optimizer', 'kit'],
+                'fast': ['speed', 'optimize', 'performance', 'boost'],
+                'image': ['picture', 'photo', 'graphic', 'pixel', 'art', 'design'],
+                'rpg': ['roleplaying', 'adventure', 'quest', 'story'],
+                'music': ['audio', 'sound', 'song', 'mp3', 'beat'],
+                'video': ['movie', 'clip', 'mp4', 'record']
+            };
+
+            let tokens = cleanQuery.split(/\s+/).filter(word => word.length > 1 && !stopWords.includes(word));
+
+            // 2. EXPAND SEARCH TERMS (Plurals + Synonyms)
+            let searchTerms = [...tokens]; 
+
+            tokens.forEach(token => {
+                // A. Handle Plurals (e.g., "RPGs" -> "RPG")
+                if (token.endsWith('s') && token.length > 3) {
+                    searchTerms.push(token.slice(0, -1));
+                }
+
+                // B. Add Synonyms
+                const baseWord = token.endsWith('s') ? token.slice(0, -1) : token;
+                
+                Object.keys(synonymMap).forEach(key => {
+                    if (key === baseWord || synonymMap[key].includes(baseWord)) {
+                        searchTerms.push(key, ...synonymMap[key]);
+                    }
+                });
+            });
+
+            // Remove duplicates
+            searchTerms = [...new Set(searchTerms)];
+
+            if (searchTerms.length === 0) {
+                 addMessage("I'm not sure what you're asking for. Try typing specific keywords like 'RPG', 'Audio', or 'Utilities'.", 'ai');
+                 return;
+            }
+
+            // 3. SCORING SYSTEM
+            const scoredItems = allItems.map(item => {
+                let score = 0;
+                // Create a giant string of all the item's data + ITS CATEGORY CONTEXT
+                const itemData = `${item.name} ${item.description} ${item.tags.join(' ')} ${item.contextKeywords}`.toLowerCase();
+                
+                searchTerms.forEach(term => {
+                    // Check if the search term exists anywhere in the data
+                    if (itemData.includes(term)) {
+                        score += 1;
+                        
+                        // Boost score if it matches the Name specifically
+                        if (item.name.toLowerCase().includes(term)) score += 3;
+                        
+                        // Boost score if it matches a Tag specifically
+                        if (item.tags.some(tag => tag.toLowerCase() === term)) score += 2;
+                        
+                        // Boost score if it matches the Category (Context)
+                        if (item.contextKeywords.toLowerCase().includes(term)) score += 1.5;
+                    }
+                });
+
+                return { item, score };
+            });
+
+            // 4. FILTER & SORT
+            const matches = scoredItems
+                .filter(entry => entry.score > 0)
+                .sort((a, b) => b.score - a.score)
+                .map(entry => entry.item);
+
+            // SAVE RESULTS FOR LATER
+            lastSearchResults = matches;
+            lastSearchIndex = 0;
+
+            if (matches.length > 0) {
+                // Show the first one immediately
+                const topMatch = matches[0];
+                lastSearchIndex = 1; // Mark first one as shown
+
+                addMessage(`I found something! <b>${topMatch.name}</b> seems to be the best match.`, 'ai');
+                addCardToChat(topMatch);
+                
+                // If more exist, prompt the user
+                if(matches.length > 1) {
+                    const remaining = matches.length - 1;
+                    addMessage(`I also found ${remaining} other items. Type <b>'more'</b> or <b>'show others'</b> to see them.`, 'ai');
+                }
+            } else {
+                const responses = [
+                    "I couldn't find any software matching those keywords.",
+                    "Hmm, nothing in the catalog matches that. Try searching for 'games', 'tools', or specific tags.",
+                    "My database is empty for that query. Try asking for 'RPG' or 'Utility'."
+                ];
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                addMessage(randomResponse, 'ai');
+            }
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
         document.addEventListener('DOMContentLoaded', renderCatalog);
     </script>
 </body>
