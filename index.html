@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zentry | Premium Software Hub</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        zentry: {
+                            dark: '#0f172a',
+                            card: '#1e293b',
+                            accent: '#3b82f6',
+                            hover: '#2563eb'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .glass-effect {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .product-card {
+            transition: all 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.15);
+            border-color: #3b82f6;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-effect border-b border-slate-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-2">
+                    <i class="ph-fill ph-cube text-blue-500 text-3xl"></i>
+                    <span class="font-bold text-xl tracking-tight">Zentry</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#software" class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">Software</a>
+                        <a href="#games" class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">Games</a>
+                        <a href="#about" class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">About</a>
+                        <a href="https://github.com/yourusername" target="_blank" class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">GitHub</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="relative pt-32 pb-12 sm:pt-40 sm:pb-16 lg:pb-24 overflow-hidden">
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
+            <h1 class="text-4xl tracking-tight font-extrabold text-white sm:text-5xl md:text-6xl">
+                <span class="block">Build. Ship.</span>
+                <span class="block text-blue-500">Simplify.</span>
+            </h1>
+            <p class="mt-3 max-w-md mx-auto text-base text-slate-400 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+                Zentry is the home for high-performance utilities, developer tools, and indie games. 
+                Secure, open-source, and ready for deployment.
+            </p>
+            <div class="mt-10 max-w-sm mx-auto sm:max-w-none sm:flex sm:justify-center">
+                <a href="#catalog-container" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10 transition">
+                    Browse All
+                </a>
+            </div>
+        </div>
+        
+        <!-- Background decorative blob -->
+        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-full h-full z-0 opacity-20 pointer-events-none">
+            <div class="absolute top-20 left-1/4 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
+            <div class="absolute top-20 right-1/4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div id="products" class="bg-slate-900 py-16 flex-grow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- JavaScript will inject all sections here -->
+            <div id="catalog-container"></div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800" id="about">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 md:flex md:items-center md:justify-between lg:px-8">
+            <div class="flex justify-center space-x-6 md:order-2">
+                <a href="#" class="text-slate-400 hover:text-slate-300">
+                    <span class="sr-only">GitHub</span>
+                    <i class="ph ph-github-logo text-2xl"></i>
+                </a>
+                <a href="#" class="text-slate-400 hover:text-slate-300">
+                    <span class="sr-only">Twitter</span>
+                    <i class="ph ph-twitter-logo text-2xl"></i>
+                </a>
+            </div>
+            <div class="mt-8 md:mt-0 md:order-1">
+                <p class="text-center text-base text-slate-400">
+                    &copy; 2024 Zentry. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- LOGIC: Data & Rendering -->
+    <script>
+        // ==========================================
+        // 🚀 ZENTRY DATA CENTER
+        // Manage your files and categories below
+        // ==========================================
+
+        /* --- COPY THIS TEMPLATE TO ADD A NEW FILE ---
+           {
+               name: "My New File",
+               version: "v1.0",
+               description: "Short description of what this does.",
+               icon: "ph-file",  // See https://phosphoricons.com/ for icon names
+               tags: ["Tag1", "Tag2"],
+               downloadLink: "./downloads/myfile.zip",
+               size: "10 MB",
+               isNew: true       // Set to true to show a "NEW" badge
+           },
+        */
+
+        const catalog = [
+            {
+                id: "software",
+                title: "Software & Utilities",
+                description: "Essential tools for productivity and development.",
+                subsections: [
+                    {
+                        title: "System Tools",
+                        items: [
+                            {
+                                name: "Zentry File Manager",
+                                version: "v1.2.0",
+                                description: "A lightweight, blazing fast file explorer for Windows and Linux.",
+                                icon: "ph-folder-notch-open",
+                                tags: ["Utility", "System"],
+                                downloadLink: "./downloads/zentry-fm-setup.exe",
+                                size: "14 MB",
+                                isNew: false
+                            },
+                            {
+                                name: "PixelOptimizer",
+                                version: "v0.9.0",
+                                description: "Lossless image compression tool for web developers.",
+                                icon: "ph-image",
+                                tags: ["Graphics", "Web"],
+                                downloadLink: "#",
+                                size: "8 MB",
+                                isNew: true
+                            }
+                        ]
+                    },
+                    {
+                        title: "Developer Kits",
+                        items: [
+                             {
+                                name: "CodeSnippet Pro",
+                                version: "v2.0.5",
+                                description: "Organize your code snippets with cloud sync.",
+                                icon: "ph-code",
+                                tags: ["DevTool"],
+                                downloadLink: "#",
+                                size: "45 MB",
+                                isNew: false
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "games",
+                title: "Games",
+                description: "Indie projects and demos available for download.",
+                subsections: [
+                    {
+                        title: "Action / Arcade",
+                        items: [
+                            {
+                                name: "Neon Racer",
+                                version: "v1.0.0",
+                                description: "A high-speed cyberpunk racing game with synthwave beats.",
+                                icon: "ph-car-profile",
+                                tags: ["Racing", "Indie"],
+                                downloadLink: "#",
+                                size: "250 MB",
+                                isNew: false
+                            },
+                            {
+                                name: "Space Defender",
+                                version: "Alpha 0.4",
+                                description: "Classic arcade shooter with modern physics.",
+                                icon: "ph-rocket",
+                                tags: ["Arcade", "Space"],
+                                downloadLink: "#",
+                                size: "120 MB",
+                                isNew: true
+                            }
+                        ]
+                    },
+                    {
+                        title: "RPG & Adventure",
+                        items: [
+                            {
+                                name: "Crystal Quest",
+                                version: "Demo",
+                                description: "Explore a pixel-art world in search of ancient relics.",
+                                icon: "ph-sword",
+                                tags: ["RPG", "Pixel Art"],
+                                downloadLink: "#",
+                                size: "450 MB",
+                                isNew: false
+                            }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // ==========================================
+        // ⚙️ SYSTEM LOGIC (Do not edit below)
+        // ==========================================
+
+        function createCardHtml(product) {
+            const isReady = product.downloadLink !== "#";
+            const buttonClass = isReady 
+                ? "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-900/20" 
+                : "bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700";
+            const buttonText = isReady ? "Download" : "Soon";
+            
+            // New Badge Logic
+            const newBadge = product.isNew 
+                ? `<span class="absolute -top-2 -right-2 bg-green-500 text-slate-900 text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg shadow-green-500/20 border border-green-400">NEW</span>` 
+                : '';
+
+            return `
+                <div class="glass-effect rounded-xl p-6 product-card border border-slate-700 flex flex-col h-full relative group">
+                    ${newBadge}
+                    
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 group-hover:border-blue-500/50 transition-colors">
+                            <i class="ph ${product.icon} text-2xl text-blue-400"></i>
+                        </div>
+                        <span class="bg-slate-800 text-slate-400 text-xs px-2 py-1 rounded-md border border-slate-700 font-mono">
+                            ${product.version}
+                        </span>
+                    </div>
+                    
+                    <h3 class="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">${product.name}</h3>
+                    <p class="text-slate-400 text-sm mb-6 flex-grow leading-relaxed">${product.description}</p>
+                    
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        ${product.tags.map(tag => `<span class="text-[11px] font-medium text-blue-300 bg-blue-900/20 px-2 py-1 rounded border border-blue-800/30">${tag}</span>`).join('')}
+                    </div>
+
+                    <div class="mt-auto pt-5 border-t border-slate-700/50 flex items-center justify-between">
+                        <span class="text-xs text-slate-500 font-mono flex items-center gap-1">
+                            <i class="ph-fill ph-hard-drives"></i>
+                            ${product.size}
+                        </span>
+                        <a href="${product.downloadLink}" 
+                           class="${buttonClass} px-4 py-2 rounded-lg text-sm font-semibold transition-all transform active:scale-95 flex items-center gap-2">
+                           <i class="ph-bold ph-download-simple"></i>
+                           ${buttonText}
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Main Render Function
+        function renderCatalog() {
+            const container = document.getElementById('catalog-container');
+            container.innerHTML = ''; // Clear existing content
+            
+            catalog.forEach(section => {
+                // Generate items HTML for each subsection
+                const subsectionsHtml = section.subsections.map(sub => {
+                    const cardsHtml = sub.items.map(item => createCardHtml(item)).join('');
+                    
+                    return `
+                        <div class="mb-16">
+                            <div class="flex items-center gap-3 mb-8 pl-4 border-l-4 border-blue-500">
+                                <h3 class="text-2xl font-bold text-slate-200 tracking-tight">${sub.title}</h3>
+                                <span class="bg-slate-800 text-slate-500 text-xs font-bold px-2 py-1 rounded-full">${sub.items.length}</span>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                ${cardsHtml}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Generate Main Section HTML
+                const sectionWrapper = `
+                    <div id="${section.id}" class="mb-24 pt-8">
+                        <div class="text-center mb-16 relative">
+                             <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                                <div class="w-full border-t border-slate-800"></div>
+                             </div>
+                             <div class="relative flex justify-center">
+                                <span class="px-4 bg-slate-900 text-lg font-semibold text-blue-500 tracking-wider uppercase">
+                                    ${section.title}
+                                </span>
+                             </div>
+                             <p class="mt-4 text-slate-400 max-w-2xl mx-auto">${section.description}</p>
+                        </div>
+                        ${subsectionsHtml}
+                    </div>
+                `;
+                
+                container.innerHTML += sectionWrapper;
+            });
+        }
+
+        // Run on load
+        document.addEventListener('DOMContentLoaded', renderCatalog);
+    </script>
+</body>
+</html>
