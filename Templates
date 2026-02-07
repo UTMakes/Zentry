@@ -7,19 +7,26 @@
            TEMPLATE 1: ADD A SINGLE FILE
            Paste this inside an 'items' list
            ----------------------------------------------------
-               {
-                  id: "unique_id_here",      // MUST be unique (e.g., "game03")
-                  name: "Name of Product",
+             {
+                  id: "unique_id_here",
+                  name: "Product Name",
                   version: "v1.0",
-                  description: "Short summary for the card view.",
-                  longDescription: "The full description that appears when the user clicks the card. You can write a lot here!",
+                  description: "Short summary.",
+                  longDescription: "Detailed description shown in the popup.",
                   author: "Developer Name",
-                  downloads: 0,              // Set this number. Highest number automatically gets "HOT" badge.
-                  icon: "ph-rocket",         // Icon name from Phosphor Icons
+                  downloads: 0,
+                  icon: "ph-rocket",
                   tags: ["Tag1", "Tag2"],
-                  downloadLink: "./downloads/filename.zip", 
-                  size: "15 MB",
-                  isNew: true                // Set to true for the "NEW" badge
+                  downloadLink: "./downloads/file.zip",
+                  size: "50 MB",
+                  isNew: true,
+                  // NEW: Add this block for the System Requirements tab
+                  requirements: {
+                      os: "Windows 10 / 11",
+                      processor: "Intel Core i5",
+                      ram: "8 GB",
+                      graphics: "GTX 1060 or better"
+    }
 },
 
 
