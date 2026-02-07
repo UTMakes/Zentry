@@ -113,7 +113,7 @@
 </head>
 <body class="antialiased min-h-screen flex flex-col relative">
 
-    <!-- NEW: Announcement Banner -->
+    <!-- Announcement Banner -->
     <div id="announcement-banner" class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white relative z-[60]">
         <div class="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -140,7 +140,6 @@
                         <a href="#products" class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">Catalog</a>
                         <button onclick="toggleSubmitModal()" class="px-3 py-2 rounded-md text-sm font-medium text-emerald-400 hover:text-white hover:bg-emerald-600/20 transition border border-emerald-500/30">Submit App</button>
                         <button onclick="toggleAbout()" class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">About</button>
-                        <a href="https://github.com/yourusername" target="_blank" class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">GitHub</a>
                     </div>
                 </div>
             </div>
@@ -310,24 +309,25 @@
                 <div class="relative transform overflow-hidden rounded-2xl bg-slate-900 border border-slate-700 text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                     <div class="bg-slate-800 px-6 py-6 border-b border-slate-700 flex justify-between items-center">
                         <h3 class="text-xl font-bold text-white flex items-center gap-2">
-                            <i class="ph-fill ph-upload-simple text-emerald-400"></i> Submit Your App
+                            <i class="ph-fill ph-shield-check text-emerald-400"></i> Secure Submission
                         </h3>
                         <button onclick="toggleSubmitModal()" class="text-slate-400 hover:text-white"><i class="ph-bold ph-x text-xl"></i></button>
                     </div>
                     <div class="p-6 space-y-4">
-                        <p class="text-slate-300 text-sm">We love community contributions! To add your software or game to Zentry, follow these steps:</p>
+                        <p class="text-slate-300 text-sm">To ensure the safety of our users, we manually review every submission. Please follow this secure process:</p>
                         <ol class="list-decimal list-inside text-slate-400 text-sm space-y-2 bg-slate-950 p-4 rounded-lg border border-slate-800">
-                            <li>Fork the <a href="#" class="text-blue-400 hover:underline">Zentry GitHub Repository</a>.</li>
-                            <li>Upload your project files to the <code class="bg-slate-800 px-1 rounded">/downloads</code> folder.</li>
-                            <li>Edit <code class="bg-slate-800 px-1 rounded">index.html</code> and add your item to the <code class="bg-slate-800 px-1 rounded">catalog</code> list.</li>
-                            <li>Submit a Pull Request (PR) for review.</li>
+                            <li>Upload your project/game to a cloud host (Google Drive, Dropbox, or GitHub Releases).</li>
+                            <li>Ensure the file is publicly accessible via link.</li>
+                            <li>Fill out the form below with your App Details and Download Link.</li>
+                            <li>Our team will scan the file and add it to the catalog within 24 hours.</li>
                         </ol>
-                        <div class="mt-4 p-4 bg-emerald-900/20 border border-emerald-500/20 rounded-lg">
-                            <p class="text-xs text-emerald-300">💡 <strong>Tip:</strong> Make sure to include a clear description, version number, and at least one tag.</p>
+                        <div class="mt-4 p-4 bg-emerald-900/20 border border-emerald-500/20 rounded-lg flex gap-3">
+                            <i class="ph-fill ph-lock-key text-emerald-400 text-xl flex-shrink-0"></i>
+                            <p class="text-xs text-emerald-300"><strong>Security Note:</strong> We do not accept direct file uploads or PRs from unverified accounts to prevent malware.</p>
                         </div>
                         <div class="mt-6 flex justify-end">
-                            <a href="https://github.com/yourusername" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2">
-                                <i class="ph-bold ph-github-logo"></i> Go to GitHub
+                            <a href="https://forms.google.com/your-form-id" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-lg text-sm font-bold transition flex items-center gap-2 shadow-lg shadow-emerald-900/20">
+                                <i class="ph-bold ph-file-text"></i> Open Submission Form
                             </a>
                         </div>
                     </div>
@@ -362,7 +362,7 @@
         </div>
     </div>
 
-    <!-- AI WIDGET START (Unchanged) -->
+    <!-- AI WIDGET START -->
     <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4">
         <div id="ai-chat-window" class="hidden w-80 md:w-96 glass-effect rounded-2xl border border-slate-700 shadow-2xl overflow-hidden flex flex-col h-[500px] transition-all duration-300 transform origin-bottom-right scale-95 opacity-0">
             <div class="bg-blue-600/90 p-4 flex justify-between items-center backdrop-blur-sm">
