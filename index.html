@@ -86,6 +86,19 @@
         .heart-btn { transition: transform 0.2s; }
         .heart-btn:active { transform: scale(0.8); }
         .heart-btn.active i { color: #ef4444; font-weight: bold; }
+
+        /* NEW: Skeleton Loading Animation */
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        .skeleton {
+            background: #1e293b;
+            background-image: linear-gradient(to right, #1e293b 0%, #334155 20%, #1e293b 40%, #1e293b 100%);
+            background-repeat: no-repeat;
+            background-size: 1000px 100%; 
+            animation: shimmer 2s infinite linear forwards;
+        }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col relative">
@@ -180,7 +193,7 @@
             
             <!-- Search & Filters -->
             <div class="max-w-3xl mx-auto mb-16">
-                <!-- Search Bar -->
+                <!-- Search Bar (Now Debounced) -->
                 <div class="relative group mb-6">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <i class="ph-bold ph-magnifying-glass text-slate-500 group-focus-within:text-blue-500 transition-colors"></i>
@@ -366,7 +379,7 @@
                                 description: "Custom bootloader for roblox.",
                                 longDescription: "Get more features and customize the ways that roblox is booted",
                                 author: "BloxStraplabs",
-                                downloads: 0,
+                                downloads: 25000, 
                                 icon: "ph-code",
                                 tags: ["Roblox"],
                                 downloadLink: "downloads/Bloxstrap-v2.10.0.exe",
@@ -407,6 +420,10 @@
                 document.getElementById('announcement-banner').classList.add('closed');
             }
 
+            // 1. Show Skeletons immediately
+            renderSkeletons();
+
+            // 2. Prepare Data (in background)
             allItemsList = [];
             catalog.forEach(section => {
                 section.subsections.forEach(sub => {
@@ -429,17 +446,59 @@
                 item.rating = (3.5 + (1.5 * popularityRatio)).toFixed(1);
             });
 
-            renderCatalog();
-            
-            allItemsList.forEach(item => {
-                item.domElement = document.getElementById(`card-${item.id}`);
-            });
+            // 3. Render Real Content after delay (Simulate App Load)
+            setTimeout(() => {
+                renderCatalog();
+                
+                // Cache DOM Elements after render
+                allItemsList.forEach(item => {
+                    item.domElement = document.getElementById(`card-${item.id}`);
+                });
 
-            checkDeepLink();
+                checkDeepLink();
 
+                const container = document.getElementById('catalog-container');
+                container.removeEventListener('click', handleCatalogClick);
+                container.addEventListener('click', handleCatalogClick);
+            }, 800); // 0.8s delay for effect
+        }
+
+        // --- NEW: Skeleton Renderer ---
+        function renderSkeletons() {
             const container = document.getElementById('catalog-container');
-            container.removeEventListener('click', handleCatalogClick);
-            container.addEventListener('click', handleCatalogClick);
+            // Create a fake layout mimicking the real one
+            let html = '';
+            // Generate 2 fake sections
+            for(let i=0; i<2; i++) {
+                html += `
+                    <div class="mb-24 pt-8">
+                        <div class="flex justify-center mb-16"><div class="h-8 w-48 skeleton rounded-full"></div></div>
+                        <div class="mb-16">
+                            <div class="flex items-center gap-3 mb-8 pl-4 border-l-4 border-slate-700">
+                                <div class="h-8 w-32 skeleton rounded"></div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                ${Array(3).fill(0).map(() => `
+                                    <div class="glass-effect rounded-xl p-6 border border-slate-700 h-[320px] flex flex-col">
+                                        <div class="flex justify-between mb-6">
+                                            <div class="h-12 w-12 skeleton rounded-lg"></div>
+                                            <div class="h-6 w-16 skeleton rounded"></div>
+                                        </div>
+                                        <div class="h-6 w-3/4 skeleton rounded mb-4"></div>
+                                        <div class="h-4 w-full skeleton rounded mb-2"></div>
+                                        <div class="h-4 w-2/3 skeleton rounded mb-6"></div>
+                                        <div class="mt-auto flex justify-between items-center">
+                                            <div class="h-4 w-12 skeleton rounded"></div>
+                                            <div class="h-10 w-28 skeleton rounded-lg"></div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
         }
 
         function checkDeepLink() {
@@ -714,7 +773,6 @@
             `;
         }
 
-        // OPTIMIZATION 1: Batch Rendering
         function renderCatalog() {
             const container = document.getElementById('catalog-container');
             let fullHtml = '';
@@ -758,7 +816,6 @@
             }, 300); 
         }
 
-        // OPTIMIZATION 5: Smart Toggling
         function filterGrid(term) {
             const searchTerm = term.toLowerCase();
             const noResults = document.getElementById('no-results-msg');
@@ -774,7 +831,6 @@
             allItemsList.forEach(item => {
                 if (item.domElement) {
                     const shouldShow = matchingIds.has(item.id);
-                    // Only modify DOM if state is changing to prevent repaint
                     if (shouldShow && item.domElement.style.display === 'none') {
                         item.domElement.style.display = 'flex';
                     } else if (!shouldShow && item.domElement.style.display !== 'none') {
