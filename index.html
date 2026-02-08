@@ -11,8 +11,6 @@
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <!-- REMOVED: Canvas Confetti script -->
-
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
@@ -269,7 +267,7 @@
             
             <!-- Search & Filters -->
             <div class="max-w-3xl mx-auto mb-16">
-                <!-- Search Bar -->
+                <!-- Search Bar (Now Debounced) -->
                 <div class="relative group mb-6">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <i class="ph-bold ph-magnifying-glass text-slate-500 group-focus-within:text-blue-500 transition-colors"></i>
@@ -278,7 +276,7 @@
                         id="global-search"
                         placeholder="Filter by name, tag, or description..." 
                         class="block w-full pl-11 pr-4 py-4 bg-slate-950 border border-slate-800 rounded-xl leading-5 text-slate-300 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all shadow-lg shadow-black/20"
-                        onkeyup="filterGrid(this.value)"
+                        onkeyup="debouncedSearch(this.value)"
                     >
                     <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
                         <span class="text-xs text-slate-600 border border-slate-800 rounded px-1.5 py-0.5">ESC to clear</span>
@@ -527,7 +525,15 @@
         // Global map for easy item lookup by ID
         let itemMap = {};
         let allItemsList = [];
-        let userFavorites = JSON.parse(localStorage.getItem('zentry_favorites') || '[]');
+        let userFavorites = [];
+
+        // Safe LocalStorage Loading (Prevents crashes if storage is corrupted)
+        try {
+            userFavorites = JSON.parse(localStorage.getItem('zentry_favorites') || '[]');
+        } catch (e) {
+            console.error("Failed to load favorites", e);
+            userFavorites = [];
+        }
 
         // ==========================================
         // ⚙️ SYSTEM LOGIC
@@ -546,28 +552,59 @@
                 section.subsections.forEach(sub => {
                     sub.items.forEach(item => {
                         itemMap[item.id] = item;
+                        // Optimized Search String
+                        item.searchString = `${item.name} ${item.description} ${item.tags.join(' ')} ${section.title} ${sub.title}`.toLowerCase();
                         item.categoryString = (section.id + " " + item.tags.join(" ")).toLowerCase();
                         allItemsList.push(item);
                     });
                 });
             });
 
-            // 2. Sort by downloads (Highest first) to find the #1 item
+            // 2. Sort by downloads
             const sortedByDownloads = [...allItemsList].sort((a, b) => b.downloads - a.downloads);
-            
-            // 3. Identify the Top Item (Max Downloads)
             const topItem = sortedByDownloads[0];
-            const maxDownloads = topItem.downloads || 1; // Prevent division by zero
+            const maxDownloads = (topItem && topItem.downloads) ? topItem.downloads : 1; 
 
-            // 4. Assign Properties (Automatic Ratings & Trending)
+            // 3. Assign Properties
             allItemsList.forEach(item => {
-                item.isTrending = (item.id === topItem.id);
+                item.isTrending = (topItem && item.id === topItem.id && item.downloads > 0);
                 const popularityRatio = item.downloads / maxDownloads;
-                const autoRating = 3.5 + (1.5 * popularityRatio);
-                item.rating = autoRating.toFixed(1);
+                item.rating = (3.5 + (1.5 * popularityRatio)).toFixed(1);
             });
 
+            // 4. Render & Attach Single Event Listener (OPTIMIZATION)
             renderCatalog();
+            const container = document.getElementById('catalog-container');
+            // Remove old listener if re-initializing to prevent duplicates (safety)
+            container.removeEventListener('click', handleCatalogClick);
+            container.addEventListener('click', handleCatalogClick);
+        }
+
+        // --- OPTIMIZATION: Unified Event Handler ---
+        function handleCatalogClick(e) {
+            // 1. Handle Favorite Button Click
+            const favBtn = e.target.closest('[data-action="favorite"]');
+            if (favBtn) {
+                e.stopPropagation();
+                toggleFavorite(favBtn.dataset.id, favBtn);
+                return;
+            }
+
+            // 2. Handle Download Button Click
+            const dlBtn = e.target.closest('[data-action="download"]');
+            if (dlBtn) {
+                e.stopPropagation();
+                e.preventDefault(); // Stop link navigation if we used <a> tag
+                handleDownload(dlBtn, dlBtn.dataset.id, dlBtn.dataset.url, dlBtn.dataset.name);
+                return;
+            }
+
+            // 3. Handle Card Click (Open Modal)
+            // We check this last because the buttons above are inside the card
+            const card = e.target.closest('[data-action="open-modal"]');
+            if (card) {
+                openProductModal(card.dataset.id);
+            }
         }
 
         // --- Toast Notification System ---
@@ -583,7 +620,6 @@
             
             container.appendChild(toast);
             
-            // Remove after 3 seconds
             setTimeout(() => {
                 toast.style.opacity = '0';
                 toast.style.transform = 'translateY(10px)';
@@ -592,19 +628,16 @@
         }
 
         // --- Favorites System ---
-        function toggleFavorite(event, itemId) {
-            event.stopPropagation(); // Prevent opening modal
-            const btn = event.currentTarget;
-            
+        function toggleFavorite(itemId, btnElement) {
             if (userFavorites.includes(itemId)) {
                 userFavorites = userFavorites.filter(id => id !== itemId);
-                btn.classList.remove('active');
-                btn.innerHTML = '<i class="ph-bold ph-heart text-slate-500 hover:text-pink-500 transition-colors"></i>';
+                btnElement.classList.remove('active');
+                btnElement.innerHTML = '<i class="ph-bold ph-heart text-slate-500 hover:text-pink-500 transition-colors"></i>';
                 showToast("Removed from favorites");
             } else {
                 userFavorites.push(itemId);
-                btn.classList.add('active');
-                btn.innerHTML = '<i class="ph-fill ph-heart text-pink-500"></i>';
+                btnElement.classList.add('active');
+                btnElement.innerHTML = '<i class="ph-fill ph-heart text-pink-500"></i>';
                 showToast("Added to favorites", "success");
             }
             localStorage.setItem('zentry_favorites', JSON.stringify(userFavorites));
@@ -616,20 +649,15 @@
             }
         }
 
-        // --- Download Handler (REMOVED CONFETTI) ---
-        function handleDownload(event, itemId, url, itemName) {
-            event.stopPropagation(); // Prevent modal if clicking button inside card
-            event.preventDefault(); // Stop immediate download
-
+        // --- Download Handler ---
+        function handleDownload(btnElement, itemId, url, itemName) {
             if (url === "#") {
                 showToast("This item is not available yet.", "info");
                 return;
             }
 
-            // 1. Immediate Toast Notification
             showToast(`Starting download for ${itemName}...`, "download");
 
-            // 2. Live Counter Update (Simulated)
             const item = itemMap[itemId];
             if (item) {
                 item.downloads++;
@@ -637,7 +665,7 @@
                 const countSpan = document.getElementById(`dl-count-${itemId}`);
                 if (countSpan) {
                     countSpan.innerText = (item.downloads/1000).toFixed(1) + "k DLs";
-                    countSpan.classList.add("text-emerald-400", "font-bold"); // Flash Green
+                    countSpan.classList.add("text-emerald-400", "font-bold");
                     setTimeout(() => countSpan.classList.remove("text-emerald-400", "font-bold"), 1000);
                 }
                 // Update Modal Counter (if open)
@@ -647,21 +675,15 @@
                 }
             }
 
-            const btn = event.currentTarget;
-            const originalContent = btn.innerHTML;
-            const originalWidth = btn.offsetWidth; // Keep button width fixed
+            const originalContent = btnElement.innerHTML;
+            const originalWidth = btnElement.offsetWidth; 
 
-            // 3. Loading State (Button)
-            btn.style.width = `${originalWidth}px`;
-            btn.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i> Wait...`;
-            btn.classList.add('cursor-wait', 'opacity-80');
+            btnElement.style.width = `${originalWidth}px`;
+            btnElement.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i> Wait...`;
+            btnElement.classList.add('cursor-wait', 'opacity-80');
             
-            // 4. Delay Logic
             setTimeout(() => {
-                // Success State
-                btn.innerHTML = `<i class="ph-bold ph-check"></i> Done`;
-                
-                // Trigger Actual Download
+                btnElement.innerHTML = `<i class="ph-bold ph-check"></i> Done`;
                 const link = document.createElement('a');
                 link.href = url;
                 link.download = url.split('/').pop();
@@ -669,14 +691,13 @@
                 link.click();
                 document.body.removeChild(link);
 
-                // Reset Button after short delay
                 setTimeout(() => {
-                    btn.innerHTML = originalContent;
-                    btn.classList.remove('cursor-wait', 'opacity-80');
-                    btn.style.width = '';
+                    btnElement.innerHTML = originalContent;
+                    btnElement.classList.remove('cursor-wait', 'opacity-80');
+                    btnElement.style.width = '';
                 }, 1500);
 
-            }, 1000); // 1000ms = 1 second delay
+            }, 1000);
         }
 
         // Banner Functions
@@ -702,7 +723,7 @@
             const item = itemMap[itemId];
             if (!item) return;
 
-            // RELATED APPS LOGIC
+            // Related Apps Logic
             const relatedApps = allItemsList.filter(other => 
                 other.id !== item.id && 
                 other.tags.some(tag => item.tags.includes(tag))
@@ -710,6 +731,8 @@
 
             let relatedAppsHtml = '';
             if (relatedApps.length > 0) {
+                // NOTE: We still use onclick here for the Modal internal navigation as it's a separate context,
+                // but we could optimize this too. For now, it's fine.
                 const cards = relatedApps.map(app => `
                     <div onclick="openProductModal('${app.id}')" class="bg-slate-800 p-3 rounded-xl border border-slate-700 cursor-pointer hover:border-blue-500 transition flex items-center gap-3">
                         <div class="bg-slate-900 p-2 rounded-lg">
@@ -721,15 +744,7 @@
                         </div>
                     </div>
                 `).join('');
-                
-                relatedAppsHtml = `
-                    <div class="border-t border-slate-800 pt-6 mt-6">
-                        <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">You might also like</h4>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            ${cards}
-                        </div>
-                    </div>
-                `;
+                relatedAppsHtml = `<div class="border-t border-slate-800 pt-6 mt-6"><h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">You might also like</h4><div class="grid grid-cols-1 sm:grid-cols-2 gap-4">${cards}</div></div>`;
             }
 
             const modalContent = document.getElementById('product-modal-content');
@@ -738,100 +753,51 @@
             const btnText = isReady ? "Download Now" : "Coming Soon";
             const reqs = item.requirements || { os: "N/A", processor: "N/A", ram: "N/A", graphics: "N/A" };
             const itemType = item.type || "File";
-
-            // CHECK FAVORITE STATUS FOR MODAL
+            
+            // Check Favorite Status
             const isFav = userFavorites.includes(item.id);
+            // Note: We use onclick here specifically for the modal content as it rebuilds dynamically
+            // and isn't part of the main grid delegation.
             const favIconClass = isFav ? "ph-fill ph-heart text-pink-500" : "ph-bold ph-heart text-slate-400";
 
             modalContent.innerHTML = `
                 <div class="relative">
-                    <!-- Header Image / Icon Area -->
                     <div class="h-32 bg-gradient-to-r from-blue-900/50 to-slate-900 border-b border-slate-700 flex items-center justify-center relative">
                         <i class="ph ${item.icon} text-6xl text-blue-400 drop-shadow-lg"></i>
-                        
-                        <!-- Modal Controls -->
                         <div class="absolute top-4 right-4 flex gap-2">
-                            <button onclick="toggleFavorite(event, '${item.id}'); this.innerHTML = userFavorites.includes('${item.id}') ? '<i class=\\'ph-fill ph-heart text-pink-500\\'></i>' : '<i class=\\'ph-bold ph-heart text-white\\'></i>'" 
-                                    class="bg-black/30 hover:bg-black/50 text-white rounded-full p-2 transition heart-btn">
-                                <i class="${favIconClass} text-lg"></i>
-                            </button>
-                            <button onclick="closeProductModal()" class="bg-black/30 hover:bg-black/50 text-white rounded-full p-2 transition">
-                                <i class="ph-bold ph-x text-lg"></i>
-                            </button>
+                            <button onclick="toggleFavorite('${item.id}', this)" class="bg-black/30 hover:bg-black/50 text-white rounded-full p-2 transition heart-btn ${isFav ? 'active' : ''}"><i class="${favIconClass} text-lg"></i></button>
+                            <button onclick="closeProductModal()" class="bg-black/30 hover:bg-black/50 text-white rounded-full p-2 transition"><i class="ph-bold ph-x text-lg"></i></button>
                         </div>
                     </div>
-                    
                     <div class="p-8 bg-slate-900">
                         <div class="flex justify-between items-start mb-6">
-                            <div>
-                                <h2 class="text-3xl font-bold text-white mb-1">${item.name}</h2>
-                                <p class="text-slate-400 text-sm">by <span class="text-blue-400">${item.author}</span> &bull; <span class="text-slate-300 font-semibold bg-slate-800 px-1.5 rounded text-xs">${itemType}</span> &bull; ${item.version}</p>
-                            </div>
-                            <div class="text-right">
-                                <div class="flex items-center gap-1 text-yellow-400 text-sm font-bold mb-1">
-                                    <span>${item.rating}</span>
-                                    <i class="ph-fill ph-star"></i>
-                                </div>
-                                <div class="text-slate-500 text-xs">${item.downloads.toLocaleString()} downloads</div>
-                            </div>
+                            <div><h2 class="text-3xl font-bold text-white mb-1">${item.name}</h2><p class="text-slate-400 text-sm">by <span class="text-blue-400">${item.author}</span> &bull; <span class="text-slate-300 font-semibold bg-slate-800 px-1.5 rounded text-xs">${itemType}</span> &bull; ${item.version}</p></div>
+                            <div class="text-right"><div class="flex items-center gap-1 text-yellow-400 text-sm font-bold mb-1"><span>${item.rating}</span><i class="ph-fill ph-star"></i></div><div class="text-slate-500 text-xs">${item.downloads.toLocaleString()} downloads</div></div>
                         </div>
-
                         <div class="space-y-6">
-                            <p class="text-slate-300 leading-relaxed text-sm bg-slate-950/50 p-4 rounded-xl border border-slate-800">
-                                ${item.longDescription}
-                            </p>
-
-                            <!-- NEW: Changelog Section -->
-                            <div class="bg-slate-950/50 p-4 rounded-xl border border-slate-800">
-                                <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">What's New</h4>
-                                <ul class="list-disc list-inside text-sm text-slate-400 space-y-1">
-                                    ${item.changelog ? item.changelog.map(log => `<li>${log}</li>`).join('') : '<li>No recent changes.</li>'}
-                                </ul>
-                            </div>
-
-                            <!-- System Requirements Grid -->
+                            <p class="text-slate-300 leading-relaxed text-sm bg-slate-950/50 p-4 rounded-xl border border-slate-800">${item.longDescription}</p>
+                            <div class="bg-slate-950/50 p-4 rounded-xl border border-slate-800"><h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">What's New</h4><ul class="list-disc list-inside text-sm text-slate-400 space-y-1">${item.changelog ? item.changelog.map(log => `<li>${log}</li>`).join('') : '<li>No recent changes.</li>'}</ul></div>
                             <div>
                                 <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">System Requirements</h4>
                                 <div class="grid grid-cols-2 gap-4 text-sm">
-                                    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
-                                        <span class="block text-slate-500 text-xs mb-1">OS</span>
-                                        <span class="text-white font-medium">${reqs.os}</span>
-                                    </div>
-                                    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
-                                        <span class="block text-slate-500 text-xs mb-1">Processor</span>
-                                        <span class="text-white font-medium">${reqs.processor}</span>
-                                    </div>
-                                    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
-                                        <span class="block text-slate-500 text-xs mb-1">RAM</span>
-                                        <span class="text-white font-medium">${reqs.ram}</span>
-                                    </div>
-                                    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
-                                        <span class="block text-slate-500 text-xs mb-1">Graphics</span>
-                                        <span class="text-white font-medium">${reqs.graphics}</span>
-                                    </div>
+                                    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700"><span class="block text-slate-500 text-xs mb-1">OS</span><span class="text-white font-medium">${reqs.os}</span></div>
+                                    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700"><span class="block text-slate-500 text-xs mb-1">Processor</span><span class="text-white font-medium">${reqs.processor}</span></div>
+                                    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700"><span class="block text-slate-500 text-xs mb-1">RAM</span><span class="text-white font-medium">${reqs.ram}</span></div>
+                                    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700"><span class="block text-slate-500 text-xs mb-1">Graphics</span><span class="text-white font-medium">${reqs.graphics}</span></div>
                                 </div>
                             </div>
-
                             <div class="pt-4 flex items-center justify-between border-t border-slate-800">
-                                <div class="flex gap-2">
-                                     ${item.tags.map(tag => `<span class="text-xs text-slate-400 bg-slate-800 px-2 py-1 rounded border border-slate-700">${tag}</span>`).join('')}
-                                </div>
-                                <button onclick="handleDownload(event, '${item.id}', '${item.downloadLink}', '${item.name}')" class="${btnClass} text-white px-8 py-3 rounded-xl font-bold transition flex items-center gap-2 shadow-lg shadow-blue-900/20 text-center justify-center min-w-[160px]">
-                                    <i class="ph-bold ph-download-simple"></i> ${btnText}
-                                </button>
+                                <div class="flex gap-2">${item.tags.map(tag => `<span class="text-xs text-slate-400 bg-slate-800 px-2 py-1 rounded border border-slate-700">${tag}</span>`).join('')}</div>
+                                <button onclick="handleDownload(this, '${item.id}', '${item.downloadLink}', '${item.name}')" class="${btnClass} text-white px-8 py-3 rounded-xl font-bold transition flex items-center gap-2 shadow-lg shadow-blue-900/20 text-center justify-center min-w-[160px]"><i class="ph-bold ph-download-simple"></i> ${btnText}</button>
                             </div>
-
-                            <!-- Related Apps -->
                             ${relatedAppsHtml}
                         </div>
                     </div>
                 </div>
             `;
-            
             document.getElementById('product-modal').classList.remove('hidden');
         }
 
-        // Helper to generate Star HTML
         function getStarRating(rating) {
             const fullStars = Math.floor(rating);
             const hasHalf = rating % 1 !== 0; 
@@ -865,8 +831,9 @@
                 badgeHtml = `<span class="absolute -top-2 -right-2 bg-green-500 text-slate-900 text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg shadow-green-500/20 border border-green-400 z-10">NEW</span>`;
             }
 
+            // OPTIMIZATION: Replaced 'onclick' with data attributes
             return `
-                <div onclick="openProductModal('${product.id}')" class="glass-effect rounded-xl p-6 product-card border border-slate-700 flex flex-col h-full relative group">
+                <div id="card-${product.id}" data-action="open-modal" data-id="${product.id}" class="glass-effect rounded-xl p-6 product-card border border-slate-700 flex flex-col h-full relative group">
                     ${badgeHtml}
                     <div class="flex items-start justify-between mb-4">
                         <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 group-hover:border-blue-500/50 transition-colors">
@@ -874,7 +841,7 @@
                         </div>
                         <div class="flex flex-col items-end gap-1">
                              <div class="flex gap-2 items-center">
-                                 <button onclick="toggleFavorite(event, '${product.id}')" class="heart-btn ${favClass} p-1 rounded-full hover:bg-slate-800 transition">
+                                 <button data-action="favorite" data-id="${product.id}" class="heart-btn ${favClass} p-1 rounded-full hover:bg-slate-800 transition">
                                     ${favIcon}
                                  </button>
                                  <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">${itemType}</span>
@@ -882,10 +849,8 @@
                              <span class="bg-slate-800 text-slate-400 text-xs px-2 py-1 rounded-md border border-slate-700 font-mono block mb-1">${product.version}</span>
                         </div>
                     </div>
-                    
                     <h3 class="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors filter-name">${product.name}</h3>
                     <p class="text-slate-400 text-sm mb-6 flex-grow leading-relaxed filter-desc line-clamp-2">${product.description}</p>
-                    
                     <div class="flex flex-wrap gap-2 mb-6 filter-tags">
                         ${product.tags.map(tag => `<span class="text-[11px] font-medium text-blue-300 bg-blue-900/20 px-2 py-1 rounded border border-blue-800/30">${tag}</span>`).join('')}
                     </div>
@@ -894,7 +859,7 @@
                             <span><i class="ph-fill ph-hard-drives"></i> ${product.size}</span>
                             <span id="dl-count-${product.id}" class="text-[10px] mt-0.5 transition-colors duration-300">${(product.downloads/1000).toFixed(1)}k DLs</span>
                         </div>
-                        <button onclick="handleDownload(event, '${product.id}', '${product.downloadLink}', '${product.name}')" class="${buttonClass} px-4 py-2 rounded-lg text-sm font-semibold transition-all transform active:scale-95 flex items-center gap-2 justify-center min-w-[110px]">
+                        <button data-action="download" data-id="${product.id}" data-url="${product.downloadLink}" data-name="${product.name}" class="${buttonClass} px-4 py-2 rounded-lg text-sm font-semibold transition-all transform active:scale-95 flex items-center gap-2 justify-center min-w-[110px]">
                            <i class="ph-bold ph-download-simple"></i> ${buttonText}
                         </button>
                     </div>
@@ -935,41 +900,43 @@
             });
         }
 
-        function applyCategoryFilter(category) {
-            const buttons = document.querySelectorAll('.filter-pill');
-            buttons.forEach(btn => {
-                if(btn.innerText.toLowerCase().includes(category) || (category === 'all' && btn.innerText === 'All')) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
+        // --- OPTIMIZATION 1: Debounce Search ---
+        let debounceTimer;
+        function debouncedSearch(term) {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                filterGrid(term);
+            }, 300); // 300ms delay
+        }
+
+        // --- OPTIMIZATION 2: Data-Driven Filtering ---
+        function filterGrid(term) {
+            const searchTerm = term.toLowerCase();
+            const sections = document.querySelectorAll('.section-wrapper');
+            let totalVisible = 0;
+
+            // 1. Determine which IDs match (Using pre-computed searchString)
+            const matchingIds = new Set();
+            allItemsList.forEach(item => {
+                if (item.searchString.includes(searchTerm)) {
+                    matchingIds.add(item.id);
                 }
             });
-            const cards = document.querySelectorAll('.product-card');
-            
-            // Handle Favorites Filter Special Case
-            if (category === 'favorites') {
-                cards.forEach(card => {
-                    // Extract ID from onclick attribute as a fallback since we don't store ID in DOM directly
-                    const onclickAttr = card.getAttribute('onclick');
-                    const idMatch = onclickAttr.match(/openProductModal\('([^']+)'\)/);
-                    if (idMatch && userFavorites.includes(idMatch[1])) {
-                        card.style.display = 'flex';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            } else {
-                // Standard Categories
-                cards.forEach(card => {
-                    const catString = card.querySelector('.category-string').innerText;
-                    if (category === 'all' || catString.includes(category)) {
-                        card.style.display = 'flex';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            }
 
+            // 2. Toggle Visibility via DOM ID
+            allItemsList.forEach(item => {
+                const card = document.getElementById(`card-${item.id}`);
+                if (card) {
+                    if (matchingIds.has(item.id)) {
+                        card.style.display = 'flex';
+                        totalVisible++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            });
+
+            // 3. Toggle Empty Sections (Cleanup)
             document.querySelectorAll('.subsection-wrapper').forEach(sub => {
                 const visibleCards = Array.from(sub.querySelectorAll('.product-card')).filter(c => c.style.display !== 'none');
                 sub.style.display = visibleCards.length > 0 ? 'block' : 'none';
@@ -978,37 +945,8 @@
                 const visibleSubs = Array.from(sec.querySelectorAll('.subsection-wrapper')).filter(s => s.style.display !== 'none');
                 sec.style.display = visibleSubs.length > 0 ? 'block' : 'none';
             });
-        }
 
-        // ... existing filterGrid code ...
-        function filterGrid(term) {
-            const searchTerm = term.toLowerCase();
-            const sections = document.querySelectorAll('.section-wrapper');
-            let totalVisible = 0;
-            sections.forEach(section => {
-                const subsections = section.querySelectorAll('.subsection-wrapper');
-                let sectionHasVisible = false;
-                subsections.forEach(sub => {
-                    const cards = sub.querySelectorAll('.product-card');
-                    let subHasVisible = false;
-                    cards.forEach(card => {
-                        const name = card.querySelector('.filter-name').innerText.toLowerCase();
-                        const desc = card.querySelector('.filter-desc').innerText.toLowerCase();
-                        const tags = card.querySelector('.filter-tags').innerText.toLowerCase();
-                        const isMatch = name.includes(searchTerm) || desc.includes(searchTerm) || tags.includes(searchTerm);
-                        if (isMatch) {
-                            card.style.display = 'flex';
-                            subHasVisible = true;
-                            totalVisible++;
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
-                    sub.style.display = subHasVisible ? 'block' : 'none';
-                    if (subHasVisible) sectionHasVisible = true;
-                });
-                section.style.display = sectionHasVisible ? 'block' : 'none';
-            });
+            // 4. Toggle No Results
             const noResults = document.getElementById('no-results-msg');
             if (totalVisible === 0 && searchTerm !== '') {
                 noResults.classList.remove('hidden');
@@ -1046,8 +984,9 @@
         function removeMessage(id) { const el = document.getElementById(id); if (el) el.remove(); }
         function processAIResponse(query) {
             const cleanQuery = query.toLowerCase();
-            const items = Object.values(itemMap);
-            const matches = items.filter(i => i.name.toLowerCase().includes(cleanQuery) || i.tags.some(t=>t.toLowerCase().includes(cleanQuery)));
+            // OPTIMIZATION: Use pre-computed searchString
+            const matches = allItemsList.filter(item => item.searchString.includes(cleanQuery));
+            
             if(matches.length > 0) {
                 addMessage(`Found ${matches[0].name}!`, 'ai');
                 const cardDiv = document.createElement('div');
