@@ -11,6 +11,8 @@
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
+    <!-- REMOVED: Canvas Confetti script -->
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
@@ -31,7 +33,8 @@
                     },
                     animation: {
                         'bounce-slow': 'bounce 3s infinite',
-                        'fade-in': 'fadeIn 0.5s ease-out'
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'spin-fast': 'spin 0.5s linear 1'
                     },
                     keyframes: {
                         fadeIn: {
@@ -140,6 +143,7 @@
         }
         .toast.success i { color: #34d399; }
         .toast.info i { color: #60a5fa; }
+        .toast.download i { color: #f472b6; }
         
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(20px); }
@@ -177,8 +181,8 @@
     <nav class="sticky top-0 w-full z-50 glass-effect border-b border-slate-700">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <div class="flex items-center gap-2">
-                    <i class="ph-fill ph-cube text-blue-500 text-3xl"></i>
+                <div class="flex items-center gap-2 cursor-pointer group" onclick="this.querySelector('i').classList.add('animate-spin-fast'); setTimeout(() => this.querySelector('i').classList.remove('animate-spin-fast'), 500)">
+                    <i class="ph-fill ph-cube text-blue-500 text-3xl transition-transform"></i>
                     <span class="font-bold text-xl tracking-tight">Zentry</span>
                 </div>
                 <div class="hidden md:block">
@@ -285,10 +289,10 @@
                 <div class="flex flex-wrap gap-2 justify-center" id="filter-container">
                     <button onclick="applyCategoryFilter('all')" class="filter-pill active px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700">All</button>
                     <button onclick="applyCategoryFilter('favorites')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 text-pink-400"><i class="ph-fill ph-heart mr-1"></i> Favorites</button>
-                    <button onclick="applyCategoryFilter('software')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700">Software</button>
-                    <button onclick="applyCategoryFilter('games')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700">Games</button>
-                    <button onclick="applyCategoryFilter('devtool')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700">DevTools</button>
-                    <button onclick="applyCategoryFilter('rpg')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700">RPG</button>
+                    <button onclick="applyCategoryFilter('minecraft')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700">Minecraft</button>
+                    <button onclick="applyCategoryFilter('roblox')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700">Roblox</button>
+                    <button onclick="applyCategoryFilter('modpacks')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700">Modpacks</button>
+                    <button onclick="applyCategoryFilter('scripts')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700">Scripts</button>
                 </div>
                 
                 <!-- No Results Message -->
@@ -447,7 +451,7 @@
         // 🚀 ZENTRY DATA CENTER
         // ==========================================
         
-        // UPGRADED DATA STRUCTURE with Requirements
+        // UPGRADED DATA STRUCTURE with Requirements & Changelog
         const catalog = [
             {
                 id: "games",
@@ -471,6 +475,11 @@
                                 downloadLink: "downloads/NexusClient1.21.zip",
                                 size: "149 KB",
                                 isNew: true,
+                                changelog: [
+                                    "Updated to Minecraft 1.21",
+                                    "Fixed shader crash issues",
+                                    "Added new cosmetics"
+                                ],
                                 requirements: {
                                     os: "Any",
                                     processor: "N/A",
@@ -497,6 +506,11 @@
                                 downloadLink: "downloads/Bloxstrap-v2.10.0.exe",
                                 size: "12 MB",
                                 isNew: true,
+                                changelog: [
+                                    "Fixed compatibility with latest Roblox patch",
+                                    "Added FastFlag editor",
+                                    "Improved UI theme"
+                                ],
                                 requirements: {
                                     os: "Windows 10/11",
                                     processor: "N/A",
@@ -556,7 +570,7 @@
             renderCatalog();
         }
 
-        // --- NEW: Toast Notification System ---
+        // --- Toast Notification System ---
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -577,7 +591,7 @@
             }, 3000);
         }
 
-        // --- NEW: Favorites System ---
+        // --- Favorites System ---
         function toggleFavorite(event, itemId) {
             event.stopPropagation(); // Prevent opening modal
             const btn = event.currentTarget;
@@ -602,8 +616,8 @@
             }
         }
 
-        // --- NEW: Download Handler (1 Second Delay) ---
-        function handleDownload(event, url, itemName) {
+        // --- Download Handler (REMOVED CONFETTI) ---
+        function handleDownload(event, itemId, url, itemName) {
             event.stopPropagation(); // Prevent modal if clicking button inside card
             event.preventDefault(); // Stop immediate download
 
@@ -615,21 +629,39 @@
             // 1. Immediate Toast Notification
             showToast(`Starting download for ${itemName}...`, "download");
 
+            // 2. Live Counter Update (Simulated)
+            const item = itemMap[itemId];
+            if (item) {
+                item.downloads++;
+                // Update Card Counter
+                const countSpan = document.getElementById(`dl-count-${itemId}`);
+                if (countSpan) {
+                    countSpan.innerText = (item.downloads/1000).toFixed(1) + "k DLs";
+                    countSpan.classList.add("text-emerald-400", "font-bold"); // Flash Green
+                    setTimeout(() => countSpan.classList.remove("text-emerald-400", "font-bold"), 1000);
+                }
+                // Update Modal Counter (if open)
+                const modalCount = document.querySelector("#product-modal .text-right .text-slate-500");
+                if (modalCount) {
+                     modalCount.innerText = item.downloads.toLocaleString() + " downloads";
+                }
+            }
+
             const btn = event.currentTarget;
             const originalContent = btn.innerHTML;
             const originalWidth = btn.offsetWidth; // Keep button width fixed
 
-            // 2. Loading State (Button)
+            // 3. Loading State (Button)
             btn.style.width = `${originalWidth}px`;
             btn.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i> Wait...`;
             btn.classList.add('cursor-wait', 'opacity-80');
             
-            // 3. Delay Logic
+            // 4. Delay Logic
             setTimeout(() => {
-                // 4. Success State
+                // Success State
                 btn.innerHTML = `<i class="ph-bold ph-check"></i> Done`;
                 
-                // 5. Trigger Actual Download
+                // Trigger Actual Download
                 const link = document.createElement('a');
                 link.href = url;
                 link.download = url.split('/').pop();
@@ -637,7 +669,7 @@
                 link.click();
                 document.body.removeChild(link);
 
-                // 6. Reset Button after short delay
+                // Reset Button after short delay
                 setTimeout(() => {
                     btn.innerHTML = originalContent;
                     btn.classList.remove('cursor-wait', 'opacity-80');
@@ -703,6 +735,7 @@
             const modalContent = document.getElementById('product-modal-content');
             const isReady = item.downloadLink !== "#";
             const btnClass = isReady ? "bg-blue-600 hover:bg-blue-700" : "bg-slate-700 cursor-not-allowed";
+            const btnText = isReady ? "Download Now" : "Coming Soon";
             const reqs = item.requirements || { os: "N/A", processor: "N/A", ram: "N/A", graphics: "N/A" };
             const itemType = item.type || "File";
 
@@ -748,6 +781,14 @@
                                 ${item.longDescription}
                             </p>
 
+                            <!-- NEW: Changelog Section -->
+                            <div class="bg-slate-950/50 p-4 rounded-xl border border-slate-800">
+                                <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">What's New</h4>
+                                <ul class="list-disc list-inside text-sm text-slate-400 space-y-1">
+                                    ${item.changelog ? item.changelog.map(log => `<li>${log}</li>`).join('') : '<li>No recent changes.</li>'}
+                                </ul>
+                            </div>
+
                             <!-- System Requirements Grid -->
                             <div>
                                 <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">System Requirements</h4>
@@ -775,8 +816,8 @@
                                 <div class="flex gap-2">
                                      ${item.tags.map(tag => `<span class="text-xs text-slate-400 bg-slate-800 px-2 py-1 rounded border border-slate-700">${tag}</span>`).join('')}
                                 </div>
-                                <button onclick="handleDownload(event, '${item.downloadLink}', '${item.name}')" class="${btnClass} text-white px-8 py-3 rounded-xl font-bold transition flex items-center gap-2 shadow-lg shadow-blue-900/20 text-center justify-center min-w-[160px]">
-                                    <i class="ph-bold ph-download-simple"></i> Download Now
+                                <button onclick="handleDownload(event, '${item.id}', '${item.downloadLink}', '${item.name}')" class="${btnClass} text-white px-8 py-3 rounded-xl font-bold transition flex items-center gap-2 shadow-lg shadow-blue-900/20 text-center justify-center min-w-[160px]">
+                                    <i class="ph-bold ph-download-simple"></i> ${btnText}
                                 </button>
                             </div>
 
@@ -851,9 +892,9 @@
                     <div class="mt-auto pt-5 border-t border-slate-700/50 flex items-center justify-between">
                         <div class="text-xs text-slate-500 font-mono flex flex-col">
                             <span><i class="ph-fill ph-hard-drives"></i> ${product.size}</span>
-                            <span class="flex items-center gap-1 mt-1 opacity-80">${getStarRating(product.rating)}</span>
+                            <span id="dl-count-${product.id}" class="text-[10px] mt-0.5 transition-colors duration-300">${(product.downloads/1000).toFixed(1)}k DLs</span>
                         </div>
-                        <button onclick="handleDownload(event, '${product.downloadLink}', '${product.name}')" class="${buttonClass} px-4 py-2 rounded-lg text-sm font-semibold transition-all transform active:scale-95 flex items-center gap-2 justify-center min-w-[110px]">
+                        <button onclick="handleDownload(event, '${product.id}', '${product.downloadLink}', '${product.name}')" class="${buttonClass} px-4 py-2 rounded-lg text-sm font-semibold transition-all transform active:scale-95 flex items-center gap-2 justify-center min-w-[110px]">
                            <i class="ph-bold ph-download-simple"></i> ${buttonText}
                         </button>
                     </div>
