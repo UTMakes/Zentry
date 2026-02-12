@@ -72,23 +72,51 @@
         @keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
         .skeleton { background: #1e293b; background-image: linear-gradient(to right, #1e293b 0%, #334155 20%, #1e293b 40%, #1e293b 100%); background-repeat: no-repeat; background-size: 1000px 100%; animation: shimmer 2s infinite linear forwards; }
 
-        /* FEATURE 1: List View Styles */
+        /* --- NEW 10x FEATURES CSS --- */
+        body { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%233b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 3 21 11 12 14 8 22 3 3"></polygon></svg>'), auto; }
+        a, button, .cursor-pointer, select, input { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="rgba(59,130,246,0.3)" stroke="%233b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 3 21 11 12 14 8 22 3 3"></polygon></svg>'), pointer !important; }
+
+        .product-card::before { content: ""; position: absolute; inset: -1px; border-radius: inherit; background: radial-gradient(400px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(59, 130, 246, 0.15), transparent 40%); z-index: -1; opacity: 0; transition: opacity 0.5s; pointer-events: none; }
+        .product-card:hover::before { opacity: 1; }
+
+        #lightbox { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.95); display: none; justify-content: center; align-items: center; cursor: zoom-out; backdrop-filter: blur(10px); }
+        #lightbox img { max-width: 90%; max-height: 90vh; border-radius: 12px; box-shadow: 0 0 50px rgba(59,130,246,0.3); border: 1px solid rgba(255,255,255,0.1); animation: fadeIn 0.3s ease-out; }
+
+        .ticker-wrap { width: 100%; overflow: hidden; background: #020617; border-top: 1px solid #1e293b; padding: 8px 0; font-size: 11px; white-space: nowrap; position: relative; color: #64748b;}
+        .ticker { display: inline-block; animation: ticker 30s linear infinite; }
+        .ticker:hover { animation-play-state: paused; }
+        @keyframes ticker { 0% { transform: translate3d(100vw, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+
+        body.matrix-mode { background-color: #000; color: #0f0 !important; font-family: 'Courier New', monospace; }
+        body.matrix-mode .glass-effect, body.matrix-mode .bg-slate-900, body.matrix-mode .bg-slate-800 { background-color: #001100 !important; border-color: #0f0 !important; }
+        body.matrix-mode * { border-color: rgba(0, 255, 0, 0.3) !important; }
+        body.matrix-mode .text-blue-500, body.matrix-mode .text-blue-400, body.matrix-mode .bg-blue-600 { color: #0f0 !important; background-color: #003300 !important; }
+        body.matrix-mode .heart-btn.active i { color: #0f0 !important; }
+
         .layout-list .grid-wrapper { display: flex; flex-direction: column; gap: 1rem; }
         .layout-list .product-card { flex-direction: row; height: auto; align-items: center; padding: 1rem 1.5rem; gap: 1.5rem; }
         .layout-list .product-card .card-header { margin-bottom: 0; min-width: 60px; }
         .layout-list .product-card .card-body { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
-        .layout-list .product-card .filter-desc { display: none; } /* Hide descriptions in list view to save space */
+        .layout-list .product-card .filter-desc { display: none; }
         .layout-list .product-card .filter-tags { margin-bottom: 0; margin-top: 0.5rem; }
         .layout-list .product-card .card-footer { margin-top: 0; padding-top: 0; border-top: none; min-width: 150px; display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; }
         .layout-list .product-card .card-footer .stats-row { text-align: right; align-items: flex-end; }
-        .layout-list .product-card .card-stats { display: none; } /* Hide top-right stats in list view */
+        .layout-list .product-card .card-stats { display: none; }
         
-        /* Gallery Scroll hiding */
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* --- NEW PRACTICAL FEATURES CSS --- */
+        #back-to-top { transition: opacity 0.3s, transform 0.3s; pointer-events: none; opacity: 0; transform: translateY(20px); }
+        #back-to-top.visible { pointer-events: auto; opacity: 1; transform: translateY(0); }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col relative">
+
+    <!-- 1. Back to Top Button -->
+    <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-6 left-6 z-50 bg-slate-800 hover:bg-slate-700 text-blue-400 p-3 rounded-full shadow-lg border border-slate-700 hidden md:flex items-center justify-center group" title="Back to Top">
+        <i class="ph-bold ph-arrow-up text-xl group-hover:-translate-y-1 transition-transform"></i>
+    </button>
 
     <div id="toast-container"></div>
 
@@ -113,8 +141,8 @@
                     <div class="ml-10 flex items-baseline space-x-4">
                         <a href="#features" class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">Features</a>
                         <a href="#products" class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">Catalog</a>
+                        <button onclick="surpriseMe()" class="px-3 py-2 rounded-md text-sm font-medium text-pink-400 hover:text-white hover:bg-pink-600/20 transition border border-pink-500/30 flex items-center gap-2 shadow-lg shadow-pink-900/20"><i class="ph-bold ph-dice-three text-lg animate-pulse"></i> Surprise Me</button>
                         <button onclick="toggleSubmitModal()" class="px-3 py-2 rounded-md text-sm font-medium text-emerald-400 hover:text-white hover:bg-emerald-600/20 transition border border-emerald-500/30">Submit App</button>
-                        <button onclick="toggleAbout()" class="px-3 py-2 rounded-md text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition">About</button>
                     </div>
                 </div>
             </div>
@@ -146,18 +174,14 @@
     <div id="products" class="bg-slate-900 py-16 flex-grow min-h-[600px]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <!-- CONTROLS ROW (Search, Sort, View Toggle) -->
             <div class="max-w-4xl mx-auto mb-16">
-                
                 <div class="flex flex-col md:flex-row gap-4 mb-6">
-                    <!-- Search Bar -->
                     <div class="relative group flex-grow">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><i class="ph-bold ph-magnifying-glass text-slate-500 group-focus-within:text-blue-500 transition-colors"></i></div>
                         <input type="text" id="global-search" placeholder="Filter by name, tag, or description..." class="block w-full pl-11 pr-4 py-4 bg-slate-950 border border-slate-800 rounded-xl leading-5 text-slate-300 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all shadow-lg shadow-black/20" onkeyup="debouncedSearch(this.value)">
                         <div class="absolute inset-y-0 right-0 pr-4 flex items-center hidden md:flex"><span class="text-xs text-slate-600 border border-slate-800 rounded px-1.5 py-0.5">/ to search</span></div>
                     </div>
                     
-                    <!-- FEATURE 2 & 1: Controls (Sort & Layout) -->
                     <div class="flex gap-2 shrink-0">
                         <div class="relative">
                             <select id="sort-select" onchange="applySort(this.value)" class="appearance-none h-full bg-slate-950 border border-slate-800 rounded-xl pl-4 pr-10 text-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent cursor-pointer shadow-lg shadow-black/20">
@@ -174,13 +198,13 @@
                     </div>
                 </div>
 
-                <!-- Category Filters -->
+                <!-- Category Filters with Data Attributes for Counters -->
                 <div class="flex flex-wrap gap-2 justify-center" id="filter-container">
-                    <button onclick="applyCategoryFilter('all')" class="filter-pill active px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700">All</button>
-                    <button onclick="applyCategoryFilter('favorites')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 text-pink-400"><i class="ph-fill ph-heart mr-1"></i> Favorites</button>
-                    <button onclick="applyCategoryFilter('minecraft')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700">Minecraft</button>
-                    <button onclick="applyCategoryFilter('roblox')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700">Roblox</button>
-                    <button onclick="applyCategoryFilter('scripts')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700">Scripts</button>
+                    <button data-category="all" onclick="applyCategoryFilter('all')" class="filter-pill active px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 flex items-center">All</button>
+                    <button data-category="favorites" onclick="applyCategoryFilter('favorites')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 text-pink-400 flex items-center"><i class="ph-fill ph-heart mr-1"></i> Favorites</button>
+                    <button data-category="minecraft" onclick="applyCategoryFilter('minecraft')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 flex items-center">Minecraft</button>
+                    <button data-category="roblox" onclick="applyCategoryFilter('roblox')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 flex items-center">Roblox</button>
+                    <button data-category="scripts" onclick="applyCategoryFilter('scripts')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 flex items-center">Scripts</button>
                 </div>
                 
                 <div id="no-results-msg" class="hidden text-center mt-8 p-8 border border-dashed border-slate-800 rounded-xl">
@@ -206,9 +230,61 @@
         </div>
     </div>
 
-    <!-- SUBMIT & ABOUT MODALS (Omitted internal content for brevity, kept structure) -->
+    <!-- SUBMIT & ABOUT MODALS -->
     <div id="submit-modal" class="fixed inset-0 z-[110] hidden"><div class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm transition-opacity" onclick="toggleSubmitModal()"></div><div class="fixed inset-0 z-10 overflow-y-auto"><div class="flex min-h-full items-center justify-center p-4"><div class="relative bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg p-6"><div class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold text-white flex items-center gap-2"><i class="ph-fill ph-shield-check text-emerald-400"></i> Submit App</h3><button onclick="toggleSubmitModal()" class="text-slate-400 hover:text-white"><i class="ph-bold ph-x text-xl"></i></button></div><p class="text-slate-300 text-sm mb-4">Please fill out our Google Form to securely submit your software for scanning and approval.</p><a href="#" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg inline-flex items-center gap-2 text-sm font-bold"><i class="ph-bold ph-link"></i> Open Form</a></div></div></div></div>
     <div id="about-modal" class="fixed inset-0 z-[110] hidden"><div class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm transition-opacity" onclick="toggleAbout()"></div><div class="fixed inset-0 z-10 overflow-y-auto"><div class="flex min-h-full items-center justify-center p-4"><div class="relative bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-lg p-6"><div class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold text-white flex items-center gap-2"><i class="ph-fill ph-info text-blue-400"></i> About Zentry</h3><button onclick="toggleAbout()" class="text-slate-400 hover:text-white"><i class="ph-bold ph-x text-xl"></i></button></div><p class="text-slate-300 text-sm">Zentry is a static, high-performance software hub.</p></div></div></div></div>
+
+    <!-- REPORT MODAL -->
+    <div id="report-modal" class="fixed inset-0 z-[120] hidden">
+        <div class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm transition-opacity" onclick="closeReportModal()"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4">
+                <div class="relative bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-6 shadow-2xl">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                            <i class="ph-fill ph-warning text-red-500"></i> Report Issue
+                        </h3>
+                        <button onclick="closeReportModal()" class="text-slate-400 hover:text-white transition"><i class="ph-bold ph-x text-xl"></i></button>
+                    </div>
+                    <form id="report-form" onsubmit="submitReport(event)">
+                        <input type="hidden" id="report-item-name" value="">
+                        <p class="text-slate-300 text-sm mb-4">You are reporting: <strong id="report-item-display" class="text-white"></strong></p>
+                        
+                        <label class="block text-sm font-medium text-slate-400 mb-2">Reason for reporting</label>
+                        <select id="report-reason" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none mb-4">
+                            <option value="" disabled selected>Select a reason...</option>
+                            <option value="Malware / Virus">Malware / Virus</option>
+                            <option value="Outdated / Broken">Outdated / Broken File</option>
+                            <option value="Fake / Spam">Fake / Spam</option>
+                            <option value="Other">Other (Please specify below)</option>
+                        </select>
+
+                        <label class="block text-sm font-medium text-slate-400 mb-2">Additional Details (Optional)</label>
+                        <textarea id="report-details" rows="3" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none mb-6 resize-none" placeholder="Provide more context..."></textarea>
+
+                        <div class="flex justify-end gap-3">
+                            <button type="button" onclick="closeReportModal()" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white transition">Cancel</button>
+                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg text-sm font-bold transition shadow-lg shadow-red-900/20 flex items-center gap-2">
+                                <i class="ph-bold ph-paper-plane-right"></i> Submit Report
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox UI -->
+    <div id="lightbox" onclick="this.style.display='none'">
+        <img id="lightbox-img" src="" alt="Fullscreen Preview">
+    </div>
+
+    <!-- Live Activity Ticker -->
+    <div class="ticker-wrap">
+        <div class="ticker" id="live-ticker">
+            Loading activity stream...
+        </div>
+    </div>
 
     <footer class="bg-slate-950 border-t border-slate-800">
         <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 md:flex md:items-center md:justify-between lg:px-8">
@@ -218,9 +294,8 @@
     </footer>
 
     <script>
-        // ==========================================
-        // 🚀 UPGRADED DATA CENTER
-        // ==========================================
+        const CURRENT_SITE_VERSION = "v1.2";
+
         const catalog = [
             {
                 id: "games",
@@ -238,14 +313,15 @@
                                 description: "A high-fidelity modpack completely overhauling textures and lighting.",
                                 longDescription: "Experience Minecraft like never before. NexusClient injects advanced rendering pipelines, custom cosmetics, and an integrated social system.",
                                 author: "Zentry Team",
-                                isVerified: true, // FEATURE 4: Verified Badge
+                                isVerified: true,
                                 downloads: 8400,
                                 icon: "ph-cube",
                                 tags: ["Minecraft", "Modpacks", "Shaders"],
                                 downloadLink: "downloads/NexusClient.zip",
                                 size: "149 MB",
                                 isNew: true,
-                                screenshots: [ // FEATURE 5: Gallery Data
+                                lastUpdated: "Oct 24, 2023",
+                                screenshots: [
                                     "https://images.unsplash.com/photo-1607513746994-51f730a44832?auto=format&fit=crop&q=80&w=600&h=300",
                                     "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=600&h=300"
                                 ],
@@ -272,13 +348,14 @@
                                 downloadLink: "downloads/Bloxstrap-v2.10.exe",
                                 size: "12 MB",
                                 isNew: false,
+                                lastUpdated: "Sep 15, 2023",
                                 requirements: { os: "Windows 10/11", processor: "Any", ram: "4 GB", graphics: "Any" }
                             },
                             {
                                 id: "rbx_script_01",
                                 name: "Forge Hub",
                                 version: "v4.1",
-                                type: "Script", // FEATURE 6: Triggers Copy instead of Download
+                                type: "Script",
                                 description: "a hub of scripts for 15+ games",
                                 longDescription: "Automatically grinds levels in BloxFruits, Pet Simulator, and more. Paste this into your executor.",
                                 author: "ScriptGod",
@@ -287,9 +364,10 @@
                                 icon: "ph-code",
                                 tags: ["Roblox", "Scripts", "Cheats"],
                                 downloadLink: "#", 
-                                scriptContent: "loadstring(game:HttpGet('https://api.luarmor.net/files/v3/loaders/d5ed1fbd4301b1d18d75153c5b47181d.lua'))()", // NEW
+                                scriptContent: "loadstring(game:HttpGet('https://api.luarmor.net/files/v3/loaders/d5ed1fbd4301b1d18d75153c5b47181d.lua'))()",
                                 size: "103B",
                                 isNew: true,
+                                lastUpdated: "Just now",
                                 requirements: { os: "Any", processor: "N/A", ram: "N/A", graphics: "N/A" }
                             }
                         ]
@@ -305,13 +383,39 @@
 
         try { userFavorites = JSON.parse(localStorage.getItem('zentry_favorites') || '[]'); } catch (e) { userFavorites = []; }
 
-        // ==========================================
-        // ⚙️ SYSTEM LOGIC
-        // ==========================================
+        const AudioEngine = {
+            ctx: null,
+            init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
+            play(type) {
+                try {
+                    this.init();
+                    if (this.ctx.state === 'suspended') this.ctx.resume();
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.connect(gain); gain.connect(this.ctx.destination);
+                    
+                    if (type === 'scan') {
+                        osc.type = 'triangle'; osc.frequency.setValueAtTime(300, this.ctx.currentTime);
+                        osc.frequency.linearRampToValueAtTime(600, this.ctx.currentTime + 0.1);
+                        gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
+                        gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.3);
+                        osc.start(); osc.stop(this.ctx.currentTime + 0.3);
+                    } else if (type === 'success') {
+                        osc.type = 'sine'; osc.frequency.setValueAtTime(800, this.ctx.currentTime);
+                        osc.frequency.setValueAtTime(1200, this.ctx.currentTime + 0.1);
+                        gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.5);
+                        osc.start(); osc.stop(this.ctx.currentTime + 0.5);
+                    }
+                } catch(e) { console.log("Audio blocked by browser."); }
+            }
+        };
 
         function initSystem() {
-            const bannerClosed = localStorage.getItem('zentry_banner_closed');
-            if (bannerClosed) document.getElementById('announcement-banner').classList.add('closed');
+            const closedVersion = localStorage.getItem('zentry_banner_closed_version');
+            if (closedVersion === CURRENT_SITE_VERSION) {
+                document.getElementById('announcement-banner').classList.add('closed');
+            }
 
             renderSkeletons();
 
@@ -323,7 +427,6 @@
                         item.searchString = `${item.name} ${item.description} ${item.tags.join(' ')} ${section.title} ${sub.title} ${item.author}`.toLowerCase();
                         item.categoryString = (section.id + " " + item.tags.join(" ")).toLowerCase();
                         
-                        // FEATURE 3: OS Icon Detection
                         const osString = (item.requirements?.os || "").toLowerCase();
                         item.osIcon = osString.includes("mac") || osString.includes("apple") ? "ph-apple-logo" : 
                                       osString.includes("linux") ? "ph-linux-logo" : 
@@ -334,7 +437,6 @@
                 });
             });
 
-            // Initial sort sets the standard properties
             const sortedByDownloads = [...allItemsList].sort((a, b) => b.downloads - a.downloads);
             const topItem = sortedByDownloads[0];
             const maxDownloads = (topItem && topItem.downloads) ? topItem.downloads : 1; 
@@ -349,16 +451,138 @@
                 renderCatalog();
                 allItemsList.forEach(item => item.domElement = document.getElementById(`card-${item.id}`));
                 
-                applySort('popular'); // Apply initial CSS order
+                applySort('popular'); 
                 checkDeepLink();
+                initTicker(); 
+                initMouseGlow(); 
+                updateFilterCounters(); // FEATURE 2: Init Counters
 
                 const container = document.getElementById('catalog-container');
                 container.removeEventListener('click', handleCatalogClick);
                 container.addEventListener('click', handleCatalogClick);
-            }, 600); // Fast skeleton load
+            }, 600); 
         }
 
-        // --- FEATURE 1: Grid/List Toggle ---
+        // --- FEATURE 1: Back to Top Visibility ---
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('back-to-top');
+            if(btn) {
+                if (window.scrollY > 400) btn.classList.add('visible');
+                else btn.classList.remove('visible');
+            }
+        });
+
+        // --- FEATURE 2: Dynamic Category Counters ---
+        function updateFilterCounters() {
+            document.querySelectorAll('.filter-pill').forEach(pill => {
+                const cat = pill.dataset.category;
+                if (!cat) return;
+                
+                let count = 0;
+                if (cat === 'all') count = allItemsList.length;
+                else if (cat === 'favorites') count = userFavorites.length;
+                else count = allItemsList.filter(i => i.categoryString.includes(cat)).length;
+                
+                if (!pill.querySelector('.cat-count')) {
+                    pill.innerHTML += ` <span class="cat-count opacity-50 ml-1 text-[10px]">(${count})</span>`;
+                } else {
+                    pill.querySelector('.cat-count').innerText = `(${count})`;
+                }
+            });
+        }
+
+        // --- FEATURE 3: Report Issue ---
+        function openReportModal(itemId) {
+            const item = itemMap[itemId];
+            if(!item) return;
+            document.getElementById('report-item-name').value = item.name;
+            document.getElementById('report-item-display').innerText = item.name;
+            document.getElementById('report-reason').value = "";
+            document.getElementById('report-details').value = "";
+            document.getElementById('report-modal').classList.remove('hidden');
+        }
+
+        function closeReportModal() {
+            document.getElementById('report-modal').classList.add('hidden');
+        }
+
+        function submitReport(event) {
+            event.preventDefault();
+            const itemName = document.getElementById('report-item-name').value;
+            const reason = document.getElementById('report-reason').value;
+            const details = document.getElementById('report-details').value;
+            
+            const webhookUrl = "https://discord.com/api/webhooks/1471347980673224726/g7FNDVCbVi1v0W3NfcTYHDsegk_yMEV1D_Np99w-jkg6xJMK6sK7BBcyMyoD4Oz2t0Io";
+
+            closeReportModal();
+            showToast(`Report submitted for "${itemName}". Thank you!`, 'success');
+
+            fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    content: `🚨 **New Report** 🚨\n**Item:** ${itemName}\n**Reason:** ${reason}\n**Details:** ${details || "None provided."}`
+                })
+            }).catch(error => console.error('Error sending report:', error));
+        }
+
+        // --- FEATURE 4: Author Filtering ---
+        function filterByAuthor(e, authorName) {
+            e.stopPropagation();
+            closeProductModal();
+            document.getElementById('global-search').value = authorName;
+            filterGrid(authorName);
+            window.scrollTo({ top: document.getElementById('products').offsetTop - 100, behavior: 'smooth' });
+        }
+
+        function initMouseGlow() {
+            document.getElementById('catalog-container').addEventListener('mousemove', e => {
+                const cards = document.querySelectorAll('.product-card');
+                for(const card of cards) {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+                }
+            });
+        }
+
+        let tickerData = ["PizzaBoxer updated Bloxstrap to v2.10", "Zentry System Security Scan Completed", "4,192 active users online", "New scripts added to Roblox Hub"];
+        function initTicker() {
+            const tickerEl = document.getElementById('live-ticker');
+            setInterval(() => {
+                const randomItem = allItemsList[Math.floor(Math.random() * allItemsList.length)];
+                if(randomItem) {
+                    tickerData.pop();
+                    tickerData.unshift(`Guest_${Math.floor(Math.random()*900)+100} downloaded ${randomItem.name}`);
+                    tickerEl.innerHTML = Array(5).fill(tickerData.join(' &nbsp;&bull;&nbsp; ')).join(' &nbsp;&bull;&nbsp; ');
+                }
+            }, 5000);
+            tickerEl.innerHTML = Array(5).fill(tickerData.join(' &nbsp;&bull;&nbsp; ')).join(' &nbsp;&bull;&nbsp; ');
+        }
+
+        function surpriseMe() {
+            if(allItemsList.length === 0) return;
+            const randomItem = allItemsList[Math.floor(Math.random() * allItemsList.length)];
+            openProductModal(randomItem.id);
+        }
+
+        function filterByTag(e, tag) {
+            e.stopPropagation();
+            closeProductModal();
+            document.getElementById('global-search').value = tag;
+            filterGrid(tag);
+            window.scrollTo({ top: document.getElementById('products').offsetTop - 100, behavior: 'smooth' });
+        }
+
+        function openLightbox(src) {
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox').style.display = 'flex';
+        }
+
         function toggleLayout(type) {
             currentLayout = type;
             const container = document.getElementById('catalog-container');
@@ -380,7 +604,6 @@
             }
         }
 
-        // --- FEATURE 2: Fast CSS Ordering ---
         function applySort(sortType) {
             let sorted = [...allItemsList];
             if(sortType === 'popular') sorted.sort((a, b) => b.downloads - a.downloads);
@@ -414,7 +637,6 @@
             const dlBtn = e.target.closest('[data-action="download"]');
             if (dlBtn) {
                 e.stopPropagation(); e.preventDefault(); 
-                // Redirect to handleCopyScript if it's a script
                 if(dlBtn.dataset.type === 'Script') handleCopyScript(dlBtn, dlBtn.dataset.id);
                 else handleDownload(dlBtn, dlBtn.dataset.id, dlBtn.dataset.url, dlBtn.dataset.name);
                 return;
@@ -424,7 +646,6 @@
             if (card) openProductModal(card.dataset.id);
         }
 
-        // --- FEATURE 8: Advanced Toast with Progress ---
         function showToast(message, type = 'info', duration = 3000) {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -432,7 +653,6 @@
             let icon = type === 'success' ? 'ph-check-circle' : 'ph-info';
             if (type === 'download') icon = 'ph-download-simple';
             
-            // Progress Bar HTML
             toast.innerHTML = `
                 <div class="toast-content"><i class="ph-fill ${icon} text-lg"></i> <span>${message}</span></div>
                 <div class="toast-progress"></div>
@@ -440,7 +660,6 @@
             container.appendChild(toast);
             
             const progress = toast.querySelector('.toast-progress');
-            // Trigger animation
             setTimeout(() => { progress.style.width = '100%'; progress.style.transitionDuration = `${duration}ms`; }, 50);
 
             setTimeout(() => {
@@ -463,9 +682,15 @@
                 showToast("Added to favorites", "success");
             }
             localStorage.setItem('zentry_favorites', JSON.stringify(userFavorites));
+            
+            updateFilterCounters();
+
+            const activeFilter = document.querySelector('.filter-pill.active');
+            if (activeFilter && activeFilter.innerText.includes('Favorites')) {
+                applyCategoryFilter('favorites');
+            }
         }
 
-        // --- FEATURE 6: Copy Script Logic ---
         function handleCopyScript(btnElement, itemId) {
             const item = itemMap[itemId];
             if(!item || !item.scriptContent) return showToast("Script content missing.", "info");
@@ -473,31 +698,40 @@
             const originalContent = btnElement.innerHTML;
             const originalWidth = btnElement.offsetWidth;
             btnElement.style.width = `${originalWidth}px`;
-            btnElement.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i> Copying...`;
-            btnElement.classList.add('cursor-wait', 'opacity-80');
+            
+            btnElement.innerHTML = `<i class="ph-bold ph-shield-check animate-pulse text-emerald-400"></i> Scanning...`;
+            btnElement.classList.add('cursor-wait', 'opacity-90', 'border-emerald-500');
+            AudioEngine.play('scan');
 
-            // Fallback robust clipboard copying
-            const copyText = item.scriptContent;
-            navigator.clipboard.writeText(copyText).then(() => {
-                btnElement.innerHTML = `<i class="ph-bold ph-check"></i> Copied!`;
-                btnElement.classList.replace('bg-slate-800', 'bg-emerald-600');
-                btnElement.classList.replace('text-blue-400', 'text-white');
-                showToast(`Loadstring copied to clipboard!`, "success", 2000);
+            setTimeout(() => {
+                btnElement.innerHTML = `<i class="ph-bold ph-spinner animate-spin text-blue-400"></i> Copying...`;
+                btnElement.classList.remove('border-emerald-500');
+
                 setTimeout(() => {
-                    btnElement.innerHTML = originalContent;
-                    btnElement.classList.remove('cursor-wait', 'opacity-80', 'bg-emerald-600', 'text-white');
-                    btnElement.style.width = '';
-                }, 2000);
-            }).catch(err => {
-                showToast("Failed to copy.", "info");
-                btnElement.innerHTML = originalContent;
-                btnElement.classList.remove('cursor-wait', 'opacity-80');
-            });
+                    const copyText = item.scriptContent;
+                    navigator.clipboard.writeText(copyText).then(() => {
+                        AudioEngine.play('success');
+                        btnElement.innerHTML = `<i class="ph-bold ph-check"></i> Copied!`;
+                        btnElement.classList.replace('bg-slate-800', 'bg-emerald-600');
+                        btnElement.classList.replace('text-blue-400', 'text-white');
+                        showToast(`Loadstring copied to clipboard!`, "success", 2000);
+                        setTimeout(() => {
+                            btnElement.innerHTML = originalContent;
+                            btnElement.classList.remove('cursor-wait', 'opacity-90', 'bg-emerald-600', 'text-white');
+                            btnElement.style.width = '';
+                        }, 2000);
+                    }).catch(err => {
+                        showToast("Failed to copy.", "info");
+                        btnElement.innerHTML = originalContent;
+                        btnElement.classList.remove('cursor-wait', 'opacity-90');
+                    });
+                }, 600);
+            }, 800);
         }
 
         function handleDownload(btnElement, itemId, url, itemName) {
             if (url === "#") return showToast("This item is not available yet.", "info");
-            showToast(`Downloading ${itemName}...`, "download", 1000);
+            showToast(`Initiating secure transfer...`, "info", 1000);
 
             const item = itemMap[itemId];
             if (item) {
@@ -515,23 +749,29 @@
             const originalContent = btnElement.innerHTML;
             const originalWidth = btnElement.offsetWidth; 
             btnElement.style.width = `${originalWidth}px`;
-            btnElement.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i> Wait...`;
-            btnElement.classList.add('cursor-wait', 'opacity-80');
+            
+            btnElement.innerHTML = `<i class="ph-bold ph-shield-check animate-pulse text-emerald-400"></i> Scanning...`;
+            btnElement.classList.add('cursor-wait', 'opacity-90');
+            AudioEngine.play('scan');
             
             setTimeout(() => {
-                btnElement.innerHTML = `<i class="ph-bold ph-check"></i> Done`;
-                const link = document.createElement('a');
-                link.href = url; link.download = url.split('/').pop();
-                document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                btnElement.innerHTML = `<i class="ph-bold ph-spinner animate-spin"></i> Transferring...`;
+                
                 setTimeout(() => {
-                    btnElement.innerHTML = originalContent;
-                    btnElement.classList.remove('cursor-wait', 'opacity-80');
-                    btnElement.style.width = '';
-                }, 1500);
-            }, 1000);
+                    AudioEngine.play('success');
+                    btnElement.innerHTML = `<i class="ph-bold ph-check"></i> Done`;
+                    const link = document.createElement('a');
+                    link.href = url; link.download = url.split('/').pop();
+                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                    setTimeout(() => {
+                        btnElement.innerHTML = originalContent;
+                        btnElement.classList.remove('cursor-wait', 'opacity-90');
+                        btnElement.style.width = '';
+                    }, 1500);
+                }, 800);
+            }, 800);
         }
 
-        // --- FEATURE 7: Share Deep Link ---
         function shareItem(itemId) {
             const url = window.location.origin + window.location.pathname + "?id=" + itemId;
             navigator.clipboard.writeText(url).then(() => {
@@ -539,10 +779,21 @@
             });
         }
 
-        function closeBanner() { document.getElementById('announcement-banner').classList.add('closed'); localStorage.setItem('zentry_banner_closed', 'true'); }
+        function closeBanner() { 
+            document.getElementById('announcement-banner').classList.add('closed'); 
+            localStorage.setItem('zentry_banner_closed_version', CURRENT_SITE_VERSION); 
+        }
         function toggleAbout() { document.getElementById('about-modal').classList.toggle('hidden'); }
         function toggleSubmitModal() { document.getElementById('submit-modal').classList.toggle('hidden'); }
-        function closeProductModal() { document.getElementById('product-modal').classList.add('hidden'); window.history.replaceState({}, document.title, window.location.pathname); /* clean URL */ }
+        
+        function closeProductModal() { 
+            document.getElementById('product-modal').classList.add('hidden'); 
+            try {
+                window.history.replaceState({}, document.title, window.location.pathname); 
+            } catch(e) {
+                // Ignore SecurityError in restricted/sandboxed iframe environments
+            }
+        }
 
         function openProductModal(itemId) {
             const item = itemMap[itemId];
@@ -559,7 +810,6 @@
             const isScript = item.type === "Script";
             const isReady = item.downloadLink !== "#" || isScript;
             
-            // Dynamic Button Logic
             let btnClass = isReady ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-slate-700 cursor-not-allowed text-slate-400";
             let btnText = isScript ? "Copy Code" : (isReady ? "Download Now" : "Coming Soon");
             let btnIcon = isScript ? "ph-copy" : "ph-download-simple";
@@ -569,17 +819,25 @@
             const isFav = userFavorites.includes(item.id);
             const favIconClass = isFav ? "ph-fill ph-heart text-pink-500" : "ph-bold ph-heart text-slate-400";
 
-            // Verified Badge HTML
             const verifiedHtml = item.isVerified ? `<i class="ph-fill ph-seal-check text-blue-400 ml-1" title="Verified Author"></i>` : '';
 
-            // Screenshot Gallery HTML
             let galleryHtml = '';
             if (item.screenshots && item.screenshots.length > 0) {
-                const imgs = item.screenshots.map(src => `<img src="${src}" class="h-40 rounded-lg object-cover border border-slate-700 shrink-0" alt="Screenshot">`).join('');
+                const imgs = item.screenshots.map(src => `<img src="${src}" onclick="openLightbox('${src}')" class="h-40 rounded-lg object-cover border border-slate-700 shrink-0 cursor-zoom-in hover:border-blue-500 transition" alt="Screenshot">`).join('');
                 galleryHtml = `<div class="mb-6"><h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Media</h4><div class="flex gap-3 overflow-x-auto hide-scroll pb-2">${imgs}</div></div>`;
             }
 
-            // FEATURE 9: Live Viewer Sim
+            let snippetHtml = '';
+            if (isScript && item.scriptContent) {
+                snippetHtml = `
+                    <div class="mb-6 relative group bg-slate-950 p-4 rounded-xl border border-slate-800 overflow-hidden cursor-crosshair">
+                        <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex justify-between"><span>Code Snippet</span> <span class="text-[10px] text-blue-400 normal-case opacity-0 group-hover:opacity-100 transition">Hover to view</span></h4>
+                        <pre class="text-[10px] text-emerald-300/80 font-mono overflow-hidden opacity-50 filter blur-[2px] group-hover:blur-none group-hover:opacity-100 transition duration-300">${item.scriptContent.substring(0, 150)}${item.scriptContent.length > 150 ? '...' : ''}</pre>
+                        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-950 pointer-events-none"></div>
+                    </div>
+                `;
+            }
+
             const liveViewers = Math.floor(Math.random() * 40) + 5;
 
             modalContent.innerHTML = `
@@ -587,6 +845,7 @@
                     <div class="h-32 bg-gradient-to-r from-blue-900/50 to-slate-900 border-b border-slate-700 flex items-center justify-center relative">
                         <i class="ph ${item.icon} text-6xl text-blue-400 drop-shadow-lg"></i>
                         <div class="absolute top-4 right-4 flex gap-2">
+                            <button onclick="openReportModal('${item.id}')" class="bg-black/30 hover:bg-red-500/30 text-slate-400 hover:text-red-400 rounded-full p-2 transition" title="Report Issue"><i class="ph-bold ph-warning text-lg"></i></button>
                             <button onclick="shareItem('${item.id}')" class="bg-black/30 hover:bg-black/50 text-white rounded-full p-2 transition" title="Share"><i class="ph-bold ph-share-network text-lg"></i></button>
                             <button onclick="toggleFavorite('${item.id}', this)" class="bg-black/30 hover:bg-black/50 text-white rounded-full p-2 transition heart-btn ${isFav ? 'active' : ''}"><i class="${favIconClass} text-lg"></i></button>
                             <button onclick="closeProductModal()" class="bg-black/30 hover:bg-black/50 text-white rounded-full p-2 transition"><i class="ph-bold ph-x text-lg"></i></button>
@@ -596,7 +855,7 @@
                         <div class="flex flex-col sm:flex-row justify-between items-start mb-6 gap-4">
                             <div>
                                 <h2 class="text-3xl font-bold text-white mb-1 flex items-center gap-2">${item.name}</h2>
-                                <p class="text-slate-400 text-sm flex items-center">by <span class="text-slate-300 ml-1 font-medium">${item.author}</span>${verifiedHtml} <span class="mx-2">&bull;</span> <span class="text-slate-300 font-semibold bg-slate-800 px-1.5 rounded text-xs">${item.type || 'App'}</span> <span class="mx-2">&bull;</span> ${item.version}</p>
+                                <p class="text-slate-400 text-sm flex items-center flex-wrap gap-y-1">by <span class="text-slate-300 ml-1 font-medium hover:text-blue-400 cursor-pointer transition underline decoration-transparent hover:decoration-blue-400" onclick="filterByAuthor(event, '${item.author}')">${item.author}</span>${verifiedHtml} <span class="mx-2">&bull;</span> <span class="text-slate-300 font-semibold bg-slate-800 px-1.5 rounded text-xs">${item.type || 'App'}</span> <span class="mx-2">&bull;</span> ${item.version} <span class="mx-2">&bull;</span> <span class="text-slate-500 text-xs flex items-center gap-1"><i class="ph-bold ph-clock"></i> ${item.lastUpdated || 'Recently'}</span></p>
                             </div>
                             <div class="text-left sm:text-right">
                                 <div class="flex items-center sm:justify-end gap-1 text-yellow-400 text-sm font-bold mb-1"><span>${item.rating}</span><i class="ph-fill ph-star"></i></div>
@@ -606,6 +865,7 @@
                         </div>
                         <div class="space-y-6">
                             ${galleryHtml}
+                            ${snippetHtml}
                             <p class="text-slate-300 leading-relaxed text-sm bg-slate-950/50 p-4 rounded-xl border border-slate-800">${item.longDescription}</p>
                             <div class="bg-slate-950/50 p-4 rounded-xl border border-slate-800"><h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">What's New</h4><ul class="list-disc list-inside text-sm text-slate-400 space-y-1">${item.changelog ? item.changelog.map(log => `<li>${log}</li>`).join('') : '<li>No recent changes.</li>'}</ul></div>
                             <div>
@@ -618,7 +878,7 @@
                                 </div>
                             </div>
                             <div class="pt-4 flex items-center justify-between border-t border-slate-800">
-                                <div class="flex gap-2 flex-wrap">${item.tags.map(tag => `<span class="text-[10px] text-slate-400 bg-slate-800 px-2 py-1 rounded border border-slate-700">${tag}</span>`).join('')}</div>
+                                <div class="flex gap-2 flex-wrap">${item.tags.map(tag => `<span onclick="filterByTag(event, '${tag}')" class="text-[10px] text-slate-400 bg-slate-800 px-2 py-1 rounded border border-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer transition">${tag}</span>`).join('')}</div>
                                 <button onclick="${btnAction}" class="${btnClass} px-8 py-3 rounded-xl font-bold transition flex items-center gap-2 shadow-lg shadow-blue-900/20 text-center justify-center min-w-[160px] shrink-0"><i class="ph-bold ${btnIcon}"></i> ${btnText}</button>
                             </div>
                             ${relatedAppsHtml}
@@ -633,7 +893,6 @@
             const isScript = product.type === "Script";
             const isReady = product.downloadLink !== "#" || isScript;
             
-            // Dynamic Button Logic for Grid
             let buttonClass = isReady 
                 ? (isScript ? "bg-slate-800 text-blue-400 hover:bg-slate-700 hover:text-white border border-slate-700" : "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-900/20")
                 : "bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700";
@@ -670,7 +929,7 @@
                         <h3 class="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors filter-name line-clamp-1">${product.name}</h3>
                         <p class="text-slate-400 text-sm mb-4 flex-grow leading-relaxed filter-desc line-clamp-2">${product.description}</p>
                         <div class="flex flex-wrap gap-2 mb-4 filter-tags">
-                            ${product.tags.slice(0,3).map(tag => `<span class="text-[10px] font-medium text-blue-300 bg-blue-900/20 px-2 py-1 rounded border border-blue-800/30">${tag}</span>`).join('')}
+                            ${product.tags.slice(0,3).map(tag => `<span onclick="filterByTag(event, '${tag}')" class="text-[10px] font-medium text-blue-300 bg-blue-900/20 px-2 py-1 rounded border border-blue-800/30 hover:bg-blue-600 hover:text-white cursor-pointer transition z-10 relative">${tag}</span>`).join('')}
                             ${product.tags.length > 3 ? `<span class="text-[10px] font-medium text-slate-400 bg-slate-800 px-2 py-1 rounded border border-slate-700">+${product.tags.length - 3}</span>` : ''}
                         </div>
                     </div>
@@ -700,7 +959,6 @@
                                 <h3 class="text-2xl font-bold text-slate-200 tracking-tight">${sub.title}</h3>
                                 <span class="bg-slate-800 text-slate-500 text-xs font-bold px-2 py-1 rounded-full">${sub.items.length}</span>
                             </div>
-                            <!-- Flex-wrap allows CSS Order to work globally inside the grid-wrapper -->
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 grid-wrapper flex-col lg:grid">
                                 ${cardsHtml}
                             </div>
@@ -712,7 +970,7 @@
             });
             
             container.innerHTML = fullHtml;
-            if(currentLayout === 'list') toggleLayout('list'); // Re-apply if it was toggled during load
+            if(currentLayout === 'list') toggleLayout('list'); 
         }
 
         let debounceTimer;
@@ -756,7 +1014,7 @@
             });
             
             if (category === 'favorites') {
-                filterGrid(''); // Clear text search
+                filterGrid(''); 
                 allItemsList.forEach(item => {
                     if (item.domElement) item.domElement.style.display = userFavorites.includes(item.id) ? 'flex' : 'none';
                 });
@@ -766,8 +1024,17 @@
             }
         }
 
-        // --- FEATURE 10: Keyboard Shortcuts ---
+        let secretKeys = '';
         document.addEventListener('keydown', (e) => {
+            secretKeys += e.key.toLowerCase();
+            if (secretKeys.length > 10) secretKeys = secretKeys.substring(1);
+            if (secretKeys.includes('zentry')) {
+                document.body.classList.toggle('matrix-mode');
+                showToast("Matrix Protocol Initiated", "success");
+                AudioEngine.play('scan');
+                secretKeys = '';
+            }
+
             if (e.key === 'Escape') {
                 document.getElementById('global-search').value = '';
                 filterGrid('');
@@ -775,6 +1042,7 @@
                 closeProductModal();
                 document.getElementById('submit-modal').classList.add('hidden');
                 document.getElementById('about-modal').classList.add('hidden');
+                document.getElementById('report-modal').classList.add('hidden');
             }
             if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
                 e.preventDefault();
