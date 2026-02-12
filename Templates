@@ -35,25 +35,61 @@ Utility
            TEMPLATE 1: ADD A SINGLE FILE
            Paste this inside an 'items' list
            ----------------------------------------------------
+Standard apps and files:
 {
     id: "unique_id_here",
-    name: "Name",
+    name: "Product Name",
     version: "v1.0",
-    type: "App",               // OPTIONS: "App", "File", "Mod", "Script", etc.
-    description: "Short description.",
-    longDescription: "Long description.",
-    author: "Author",
-    downloads: 0,
-    icon: "ph-cube",
-    tags: ["Tag1"],
-    downloadLink: "#",
-    size: "10 MB",
+    type: "App",
+    description: "Short description for the grid view.",
+    longDescription: "Full details shown in the popup window.",
+    author: "Your Name",
+    isVerified: true,           // NEW: Set to true for a blue checkmark next to author
+    downloads: 500,             
+    icon: "ph-cube",            
+    tags: ["Minecraft", "Utility"], 
+    downloadLink: "https://link-to-your-file.zip",
+    screenshots: [              // NEW: Add image URLs here for a swipeable gallery!
+        "https://link-to-image-1.jpg",
+        "https://link-to-image-2.jpg"
+    ],
+    size: "15 MB",
     isNew: true,
+    changelog: [
+        "Initial release",
+        "Fixed major bug"
+    ],
     requirements: {
-        os: "Windows 10",
-        processor: "i5",
-        ram: "8GB",
-        graphics: "GTX 1050"
+        os: "Windows 10/11",    // NEW FEATURE: Typing "Windows", "Mac", or "Linux" here automatically changes the platform icon!
+        processor: "Intel i5",
+        ram: "8 GB",
+        graphics: "N/A"
+    }
+},
+===================================================================================================================================================
+Roblox scripts:
+{
+    id: "unique_script_01",
+    name: "Auto-Farm Hub",
+    version: "v2.0",
+    type: "Script",             // MUST BE EXACTLY "Script" to trigger the copy button!
+    description: "Short script description.",
+    longDescription: "Paste this into your executor to run.",
+    author: "ScriptGod",
+    isVerified: false,          // NEW
+    downloads: 1200,            
+    icon: "ph-code",            
+    tags: ["Roblox", "Scripts"], 
+    downloadLink: "#",          // Leave as "#" for scripts
+    scriptContent: "loadstring(game:HttpGet('https://raw.githubusercontent.com/example/script.lua'))()", // NEW: The exact code that gets copied to their clipboard
+    size: "2 KB",
+    isNew: false,
+    changelog: ["Updated bypass"],
+    requirements: {
+        os: "Any",
+        processor: "N/A",
+        ram: "N/A",
+        graphics: "N/A"
     }
 },
            ----------------------------------------------------
