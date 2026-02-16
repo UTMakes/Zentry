@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zentry | Premium Software Hub</title>
     
-    <link rel="preconnect" href="https://cdn.tailwindcss.com">
-    <link rel="preconnect" href="https://unpkg.com">
+    <!-- OPTIMIZED: Only preconnect to fonts, dns-prefetch for others -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
 
     <meta name="description" content="The best open-source mods, scripts, and clients for Minecraft, Roblox, and more.">
     <meta property="og:title" content="Zentry | Premium Software Hub">
@@ -17,8 +18,11 @@
     <meta property="og:image" content="https://phosphoricons.com/assets/img/phosphor-mark-tight-yellow.png">
     <meta name="theme-color" content="#0f172a">
 
+    <!-- OPTIMIZED: Deferred scripts with proper async loading -->
     <script src="https://cdn.tailwindcss.com" defer></script>
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
+    
+    <!-- OPTIMIZED: Font with display swap for faster rendering -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <script>
@@ -36,13 +40,13 @@
     </script>
 
     <style>
-        /* NEW: Custom Font for Logo */
+        /* OPTIMIZED: Custom Font with proper font-display for performance */
         @font-face {
             font-family: 'Share';
             src: url('Assets/share.woff') format('woff');
             font-weight: normal;
             font-style: normal;
-            font-display: swap;
+            font-display: swap; /* Shows fallback immediately, swaps when loaded */
         }
 
         .font-zentry-logo {
@@ -85,9 +89,11 @@
         @keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
         .skeleton { background: #1e293b; background-image: linear-gradient(to right, #1e293b 0%, #334155 20%, #1e293b 40%, #1e293b 100%); background-repeat: no-repeat; background-size: 1000px 100%; animation: shimmer 2s infinite linear forwards; }
 
-        /* --- NEW 10x FEATURES CSS --- */
-        body { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%233b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 3 21 11 12 14 8 22 3 3"></polygon></svg>'), auto; }
-        a, button, .cursor-pointer, select, input { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="rgba(59,130,246,0.3)" stroke="%233b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 3 21 11 12 14 8 22 3 3"></polygon></svg>'), pointer !important; }
+        /* --- OPTIMIZED: Custom cursor only on desktop with hover capability --- */
+        @media (hover: hover) and (pointer: fine) {
+            body { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%233b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 3 21 11 12 14 8 22 3 3"></polygon></svg>'), auto; }
+            a, button, .cursor-pointer, select, input { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="rgba(59,130,246,0.3)" stroke="%233b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 3 21 11 12 14 8 22 3 3"></polygon></svg>'), pointer !important; }
+        }
 
         .product-card::before { content: ""; position: absolute; inset: -1px; border-radius: inherit; background: radial-gradient(400px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(59, 130, 246, 0.15), transparent 40%); z-index: -1; opacity: 0; transition: opacity 0.5s; pointer-events: none; }
         .product-card:hover::before { opacity: 1; }
@@ -102,7 +108,13 @@
 
         body.matrix-mode { background-color: #000; color: #0f0 !important; font-family: 'Courier New', monospace; }
         body.matrix-mode .glass-effect, body.matrix-mode .bg-slate-900, body.matrix-mode .bg-slate-800 { background-color: #001100 !important; border-color: #0f0 !important; }
-        body.matrix-mode * { border-color: rgba(0, 255, 0, 0.3) !important; }
+        /* OPTIMIZED: Target specific elements instead of * selector for better performance */
+        body.matrix-mode .product-card, 
+        body.matrix-mode nav, 
+        body.matrix-mode .modal-panel,
+        body.matrix-mode input,
+        body.matrix-mode select,
+        body.matrix-mode button { border-color: rgba(0, 255, 0, 0.3) !important; }
         body.matrix-mode .text-blue-500, body.matrix-mode .text-blue-400, body.matrix-mode .bg-blue-600 { color: #0f0 !important; background-color: #003300 !important; }
         body.matrix-mode .heart-btn.active i { color: #0f0 !important; }
 
@@ -131,6 +143,23 @@
         @keyframes blob-float {
             0%, 100% { transform: translateY(0) scale(1); }
             50% { transform: translateY(-10px) scale(1.05); }
+        }
+        
+        /* ACCESSIBILITY: Respect user's motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+            .blob-mini,
+            .ticker,
+            .animate-blob,
+            .animate-bounce-slow,
+            .animate-spin-fast {
+                animation: none !important;
+                transition: none !important;
+            }
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
         }
     </style>
 </head>
@@ -574,14 +603,14 @@
             }
         }
 
-        // --- FEATURE 1: Back to Top Visibility ---
+        // --- OPTIMIZED: Back to Top with Passive Scroll Listener ---
         window.addEventListener('scroll', () => {
             const btn = document.getElementById('back-to-top');
             if(btn) {
                 if (window.scrollY > 400) btn.classList.add('visible');
                 else btn.classList.remove('visible');
             }
-        });
+        }, { passive: true });
 
         // --- FEATURE 2: Dynamic Category Counters ---
         function updateFilterCounters() {
@@ -648,17 +677,29 @@
             window.scrollTo({ top: document.getElementById('products').offsetTop - 100, behavior: 'smooth' });
         }
 
+        // OPTIMIZED: Mouse glow with throttling and RAF to prevent layout thrashing
         function initMouseGlow() {
+            let rafId = null;
+            let mouseX = 0, mouseY = 0;
+            
             document.getElementById('catalog-container').addEventListener('mousemove', e => {
-                const cards = document.querySelectorAll('.product-card');
-                for(const card of cards) {
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    card.style.setProperty('--mouse-x', `${x}px`);
-                    card.style.setProperty('--mouse-y', `${y}px`);
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                if (rafId === null) {
+                    rafId = requestAnimationFrame(() => {
+                        const cards = document.querySelectorAll('.product-card');
+                        for(const card of cards) {
+                            const rect = card.getBoundingClientRect();
+                            const x = mouseX - rect.left;
+                            const y = mouseY - rect.top;
+                            card.style.setProperty('--mouse-x', `${x}px`);
+                            card.style.setProperty('--mouse-y', `${y}px`);
+                        }
+                        rafId = null;
+                    });
                 }
-            });
+            }, { passive: true });
         }
 
         let tickerData = ["PizzaBoxer updated Bloxstrap to v2.10", "Zentry System Security Scan Completed", "4,192 active users online", "New scripts added to Roblox Hub"];
@@ -1155,6 +1196,7 @@
         let debounceTimer;
         function debouncedSearch(term) { clearTimeout(debounceTimer); debounceTimer = setTimeout(() => { filterGrid(term); }, 300); }
 
+        // OPTIMIZED: Batch DOM operations to prevent layout thrashing
         function filterGrid(term) {
             const searchTerm = term.toLowerCase();
             const noResults = document.getElementById('no-results-msg');
@@ -1165,35 +1207,44 @@
                 document.querySelectorAll('.load-more-btn-container').forEach(btn => btn.remove());
             }
 
+            // PHASE 1: Calculate what needs to change (no DOM reads/writes mixed)
             const matchingIds = new Set();
             allItemsList.forEach(item => { if (item.searchString.includes(searchTerm)) matchingIds.add(item.id); });
 
+            const updates = [];
             allItemsList.forEach(item => {
                 if (item.domElement) {
                     const shouldShow = matchingIds.has(item.id);
-                    if (shouldShow && item.domElement.style.display === 'none') {
-                        item.domElement.style.display = 'flex';
-                    } else if (!shouldShow && item.domElement.style.display !== 'none') {
-                        item.domElement.style.display = 'none';
-                    }
-                    if (shouldShow && item.domElement.classList.contains('hidden')) {
-                        item.domElement.classList.remove('hidden');
+                    const currentlyHidden = item.domElement.style.display === 'none' || item.domElement.classList.contains('hidden');
+                    
+                    if (shouldShow !== !currentlyHidden) {
+                        updates.push({ element: item.domElement, show: shouldShow });
                     }
                     if (shouldShow) totalVisible++;
                 }
             });
 
-            document.querySelectorAll('.subsection-wrapper').forEach(sub => {
-                const visibleCards = Array.from(sub.querySelectorAll('.product-card')).filter(c => c.style.display !== 'none' && !c.classList.contains('hidden'));
-                sub.style.display = visibleCards.length > 0 ? 'block' : 'none';
-            });
-            document.querySelectorAll('.section-wrapper').forEach(sec => {
-                const visibleSubs = Array.from(sec.querySelectorAll('.subsection-wrapper')).filter(s => s.style.display !== 'none');
-                sec.style.display = visibleSubs.length > 0 ? 'block' : 'none';
-            });
+            // PHASE 2: Apply all DOM changes at once (batched writes)
+            requestAnimationFrame(() => {
+                updates.forEach(({ element, show }) => {
+                    element.style.display = show ? 'flex' : 'none';
+                    if (show) element.classList.remove('hidden');
+                });
 
-            if (totalVisible === 0 && searchTerm !== '') noResults.classList.remove('hidden');
-            else noResults.classList.add('hidden');
+                // Update visibility of sections/subsections
+                document.querySelectorAll('.subsection-wrapper').forEach(sub => {
+                    const visibleCards = Array.from(sub.querySelectorAll('.product-card')).filter(c => c.style.display !== 'none' && !c.classList.contains('hidden'));
+                    sub.style.display = visibleCards.length > 0 ? 'block' : 'none';
+                });
+                
+                document.querySelectorAll('.section-wrapper').forEach(sec => {
+                    const visibleSubs = Array.from(sec.querySelectorAll('.subsection-wrapper')).filter(s => s.style.display !== 'none');
+                    sec.style.display = visibleSubs.length > 0 ? 'block' : 'none';
+                });
+
+                if (totalVisible === 0 && searchTerm !== '') noResults.classList.remove('hidden');
+                else noResults.classList.add('hidden');
+            });
         }
 
         function applyCategoryFilter(category) {
