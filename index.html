@@ -36,6 +36,19 @@
     </script>
 
     <style>
+        /* NEW: Custom Font for Logo */
+        @font-face {
+            font-family: 'Share';
+            src: url('Assets/share.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        .font-zentry-logo {
+            font-family: 'Share', 'Inter', sans-serif;
+        }
+
         body { background-color: #0f172a; color: #f8fafc; -webkit-tap-highlight-color: transparent; }
         .glass-effect { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
         .product-card { transition: all 0.3s ease; cursor: pointer; }
@@ -124,7 +137,7 @@
         <div class="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <span class="bg-white/20 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider">New</span>
-                <p class="text-sm font-medium">Zentry v1.1 is live! Press <kbd class="bg-white/20 px-1 rounded text-xs mx-1">/</kbd> to search.</p>
+                <p class="text-sm font-medium">Zentry v1.2 is live! Press <kbd class="bg-white/20 px-1 rounded text-xs mx-1">/</kbd> to search.</p>
             </div>
             <button onclick="closeBanner()" class="text-white/80 hover:text-white transition p-1 hover:bg-white/10 rounded"><i class="ph-bold ph-x"></i></button>
         </div>
@@ -135,7 +148,8 @@
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center gap-2 cursor-pointer group" onclick="this.querySelector('i').classList.add('animate-spin-fast'); setTimeout(() => this.querySelector('i').classList.remove('animate-spin-fast'), 500)">
                     <i class="ph-fill ph-cube text-blue-500 text-3xl transition-transform"></i>
-                    <span class="font-bold text-xl tracking-tight">Zentry</span>
+                    <!-- APPLIED CUSTOM FONT HERE -->
+                    <span class="font-zentry-logo text-2xl tracking-wide font-bold">Zentry</span>
                 </div>
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
@@ -175,15 +189,18 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <div class="max-w-4xl mx-auto mb-16">
-                <div class="flex flex-col md:flex-row gap-4 mb-6">
+                <div class="flex flex-col md:flex-row gap-4 mb-2">
                     <div class="relative group flex-grow">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><i class="ph-bold ph-magnifying-glass text-slate-500 group-focus-within:text-blue-500 transition-colors"></i></div>
                         <input type="text" id="global-search" placeholder="Filter by name, tag, or description..." class="block w-full pl-11 pr-4 py-4 bg-slate-950 border border-slate-800 rounded-xl leading-5 text-slate-300 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all shadow-lg shadow-black/20" onkeyup="debouncedSearch(this.value)">
                         <div class="absolute inset-y-0 right-0 pr-4 flex items-center hidden md:flex"><span class="text-xs text-slate-600 border border-slate-800 rounded px-1.5 py-0.5">/ to search</span></div>
+                        
+                        <!-- FEATURE 4: Dynamic Trending Tags Container -->
+                        <div id="trending-tags-container" class="flex flex-wrap gap-2 text-[11px] text-slate-500 mt-3 items-center ml-2"></div>
                     </div>
                     
                     <div class="flex gap-2 shrink-0">
-                        <div class="relative">
+                        <div class="relative h-14">
                             <select id="sort-select" onchange="applySort(this.value)" class="appearance-none h-full bg-slate-950 border border-slate-800 rounded-xl pl-4 pr-10 text-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent cursor-pointer shadow-lg shadow-black/20">
                                 <option value="popular">Most Popular</option>
                                 <option value="newest">Newest First</option>
@@ -191,7 +208,7 @@
                             </select>
                             <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-slate-500"><i class="ph-bold ph-caret-down"></i></div>
                         </div>
-                        <div class="bg-slate-950 border border-slate-800 rounded-xl p-1 flex shadow-lg shadow-black/20">
+                        <div class="bg-slate-950 border border-slate-800 rounded-xl p-1 flex shadow-lg shadow-black/20 h-14">
                             <button onclick="toggleLayout('grid')" id="btn-layout-grid" class="p-2 rounded-lg bg-slate-800 text-blue-400 transition-colors"><i class="ph-bold ph-squares-four text-lg"></i></button>
                             <button onclick="toggleLayout('list')" id="btn-layout-list" class="p-2 rounded-lg text-slate-500 hover:text-slate-300 transition-colors"><i class="ph-bold ph-list text-lg"></i></button>
                         </div>
@@ -199,7 +216,7 @@
                 </div>
 
                 <!-- Category Filters with Data Attributes for Counters -->
-                <div class="flex flex-wrap gap-2 justify-center" id="filter-container">
+                <div class="flex flex-wrap gap-2 justify-center mt-6" id="filter-container">
                     <button data-category="all" onclick="applyCategoryFilter('all')" class="filter-pill active px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 flex items-center">All</button>
                     <button data-category="favorites" onclick="applyCategoryFilter('favorites')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 text-pink-400 flex items-center"><i class="ph-fill ph-heart mr-1"></i> Favorites</button>
                     <button data-category="minecraft" onclick="applyCategoryFilter('minecraft')" class="filter-pill px-4 py-1.5 rounded-full text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:bg-slate-700 flex items-center">Minecraft</button>
@@ -231,7 +248,7 @@
     </div>
 
     <!-- SUBMIT & ABOUT MODALS -->
-    <div id="submit-modal" class="fixed inset-0 z-[110] hidden"><div class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm transition-opacity" onclick="toggleSubmitModal()"></div><div class="fixed inset-0 z-10 overflow-y-auto"><div class="flex min-h-full items-center justify-center p-4"><div class="relative bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg p-6"><div class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold text-white flex items-center gap-2"><i class="ph-fill ph-shield-check text-emerald-400"></i> Submit App</h3><button onclick="toggleSubmitModal()" class="text-slate-400 hover:text-white"><i class="ph-bold ph-x text-xl"></i></button></div><p class="text-slate-300 text-sm mb-4">Please fill out our Google Form to securely submit your software for scanning and approval.</p><a href="#" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg inline-flex items-center gap-2 text-sm font-bold"><i class="ph-bold ph-link"></i> Open Form</a></div></div></div></div>
+    <div id="submit-modal" class="fixed inset-0 z-[110] hidden"><div class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm transition-opacity" onclick="toggleSubmitModal()"></div><div class="fixed inset-0 z-10 overflow-y-auto"><div class="flex min-h-full items-center justify-center p-4"><div class="relative bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-lg p-6"><div class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold text-white flex items-center gap-2"><i class="ph-fill ph-shield-check text-emerald-400"></i> Submit App</h3><button onclick="toggleSubmitModal()" class="text-slate-400 hover:text-white"><i class="ph-bold ph-x text-xl"></i></button></div><p class="text-slate-300 text-sm mb-4">Please fill out our Google Form to securely submit your software for scanning and approval.</p><a href="https://forms.gle/nxq1EGxUKLx1faZPA" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg inline-flex items-center gap-2 text-sm font-bold"><i class="ph-bold ph-link"></i> Open Form</a></div></div></div></div>
     <div id="about-modal" class="fixed inset-0 z-[110] hidden"><div class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm transition-opacity" onclick="toggleAbout()"></div><div class="fixed inset-0 z-10 overflow-y-auto"><div class="flex min-h-full items-center justify-center p-4"><div class="relative bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-lg p-6"><div class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold text-white flex items-center gap-2"><i class="ph-fill ph-info text-blue-400"></i> About Zentry</h3><button onclick="toggleAbout()" class="text-slate-400 hover:text-white"><i class="ph-bold ph-x text-xl"></i></button></div><p class="text-slate-300 text-sm">Zentry is a static, high-performance software hub.</p></div></div></div></div>
 
     <!-- REPORT MODAL -->
@@ -294,7 +311,7 @@
     </footer>
 
     <script>
-        const CURRENT_SITE_VERSION = "v1.2";
+        const CURRENT_SITE_VERSION = "v1.2"; // UPDATED VERSION
 
         const catalog = [
             {
@@ -307,26 +324,24 @@
                         items: [
                             {
                                 id: "mc_modpack_01",
-                                name: "NexusClient 1.21",
-                                version: "v1.0",
-                                type: "App",
+                                name: "NexusClient1.21",
+                                version: "V1.0",
+                                type: "File",
                                 description: "A high-fidelity modpack completely overhauling textures and lighting.",
-                                longDescription: "Experience Minecraft like never before. NexusClient injects advanced rendering pipelines, custom cosmetics, and an integrated social system.",
+                                longDescription: "Experience Minecraft like never before.",
                                 author: "Zentry Team",
-                                isVerified: true,
-                                downloads: 8400,
+                                downloads: 0,
                                 icon: "ph-cube",
-                                tags: ["Minecraft", "Modpacks", "Shaders"],
-                                downloadLink: "downloads/NexusClient.zip",
-                                size: "149 MB",
+                                tags: ["Minecraft", "Modpacks"],
+                                downloadLink: "downloads/NexusClient1.21.zip",
+                                size: "149 KB",
                                 isNew: true,
-                                lastUpdated: "Oct 24, 2023",
-                                screenshots: [
-                                    "https://images.unsplash.com/photo-1607513746994-51f730a44832?auto=format&fit=crop&q=80&w=600&h=300",
-                                    "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=600&h=300"
-                                ],
-                                changelog: ["Updated to Minecraft 1.21", "Fixed shader crash issues", "Added new UI themes"],
-                                requirements: { os: "Windows 10/11", processor: "Intel i5", ram: "8 GB", graphics: "GTX 1650" }
+                                requirements: {
+                                    os: "Any",
+                                    processor: "N/A",
+                                    ram: "16 GB",
+                                    graphics: "N/A"
+                                }
                             }
                         ]
                     },
@@ -334,22 +349,25 @@
                         title: "Roblox",
                         items: [
                             {
-                                id: "rbx_bloxstrap",
+                                id: "Bloxstrap",
                                 name: "Bloxstrap",
                                 version: "v2.10",
-                                type: "App",
-                                description: "Custom bootloader and utility for Roblox.",
-                                longDescription: "Enhance your Roblox experience with FastFlag editing, custom Discord Rich Presence, and legacy UI restoration.",
-                                author: "PizzaBoxer",
-                                isVerified: true,
-                                downloads: 152000, 
-                                icon: "ph-wrench",
-                                tags: ["Roblox", "Utility"],
-                                downloadLink: "downloads/Bloxstrap-v2.10.exe",
+                                type: "BootLoader",
+                                description: "Custom bootloader for roblox.",
+                                longDescription: "Get more features and customize the ways that roblox is booted",
+                                author: "BloxStraplabs",
+                                downloads: 0,
+                                icon: "ph-code",
+                                tags: ["Roblox"],
+                                downloadLink: "downloads/Bloxstrap-v2.10.0.exe",
                                 size: "12 MB",
-                                isNew: false,
-                                lastUpdated: "Sep 15, 2023",
-                                requirements: { os: "Windows 10/11", processor: "Any", ram: "4 GB", graphics: "Any" }
+                                isNew: true,
+                                requirements: {
+                                    os: "Windows 10/11",
+                                    processor: "N/A",
+                                    ram: "N/A",
+                                    graphics: "N/A"
+                                }
                             },
                             {
                                 id: "rbx_script_01",
@@ -380,6 +398,7 @@
         let allItemsList = [];
         let userFavorites = [];
         let currentLayout = 'grid';
+        const INITIAL_PAGINATION_LIMIT = 6;
 
         try { userFavorites = JSON.parse(localStorage.getItem('zentry_favorites') || '[]'); } catch (e) { userFavorites = []; }
 
@@ -447,6 +466,9 @@
                 item.rating = (3.5 + (1.5 * popularityRatio)).toFixed(1);
             });
 
+            // FEATURE 4: Render Trending Tags
+            renderTrendingTags();
+
             setTimeout(() => {
                 renderCatalog();
                 allItemsList.forEach(item => item.domElement = document.getElementById(`card-${item.id}`));
@@ -461,6 +483,26 @@
                 container.removeEventListener('click', handleCatalogClick);
                 container.addEventListener('click', handleCatalogClick);
             }, 600); 
+        }
+
+        // --- FEATURE 4: Dynamic Trending Tags ---
+        function renderTrendingTags() {
+            const tagCounts = {};
+            allItemsList.forEach(item => {
+                item.tags.forEach(tag => {
+                    tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+                });
+            });
+            const trendingTags = Object.entries(tagCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 3)
+                .map(entry => entry[0]);
+
+            const tagsContainer = document.getElementById('trending-tags-container');
+            if (tagsContainer && trendingTags.length > 0) {
+                tagsContainer.innerHTML = `<span class="font-semibold text-orange-400 flex items-center gap-1"><i class="ph-fill ph-fire"></i> Trending:</span> ` +
+                    trendingTags.map(tag => `<span onclick="filterByTag(event, '${tag}')" class="cursor-pointer hover:text-blue-400 transition underline decoration-transparent hover:decoration-blue-400">#${tag}</span>`).join('<span class="text-slate-700 px-0.5">&bull;</span>');
+            }
         }
 
         // --- FEATURE 1: Back to Top Visibility ---
@@ -624,11 +666,28 @@
             container.innerHTML = html;
         }
 
+        // --- FEATURE 1: URL Browser Back Button Integration ---
         function checkDeepLink() {
             const urlParams = new URLSearchParams(window.location.search);
-            const itemId = urlParams.get('id');
-            if (itemId && itemMap[itemId]) openProductModal(itemId);
+            const itemIdSearch = urlParams.get('id');
+            const hash = window.location.hash;
+            
+            if (itemIdSearch && itemMap[itemIdSearch]) {
+                openProductModal(itemIdSearch, true);
+            } else if (hash.startsWith('#item-')) {
+                const itemIdHash = hash.replace('#item-', '');
+                if (itemMap[itemIdHash]) openProductModal(itemIdHash, true);
+            }
         }
+
+        window.addEventListener('hashchange', () => {
+            if (window.location.hash.startsWith('#item-')) {
+                const itemId = window.location.hash.replace('#item-', '');
+                if (itemMap[itemId]) openProductModal(itemId, true);
+            } else {
+                document.getElementById('product-modal').classList.add('hidden');
+            }
+        });
 
         function handleCatalogClick(e) {
             const favBtn = e.target.closest('[data-action="favorite"]');
@@ -773,7 +832,7 @@
         }
 
         function shareItem(itemId) {
-            const url = window.location.origin + window.location.pathname + "?id=" + itemId;
+            const url = window.location.origin + window.location.pathname + "#item-" + itemId;
             navigator.clipboard.writeText(url).then(() => {
                 showToast("Direct link copied to clipboard!", "success");
             });
@@ -789,15 +848,21 @@
         function closeProductModal() { 
             document.getElementById('product-modal').classList.add('hidden'); 
             try {
-                window.history.replaceState({}, document.title, window.location.pathname); 
+                if(window.location.hash) {
+                    window.history.replaceState('', document.title, window.location.pathname + window.location.search); 
+                }
             } catch(e) {
                 // Ignore SecurityError in restricted/sandboxed iframe environments
             }
         }
 
-        function openProductModal(itemId) {
+        function openProductModal(itemId, fromHash = false) {
             const item = itemMap[itemId];
             if (!item) return;
+
+            if (!fromHash) {
+                window.location.hash = 'item-' + itemId;
+            }
 
             const relatedApps = allItemsList.filter(other => other.id !== item.id && other.tags.some(tag => item.tags.includes(tag))).slice(0, 2); 
             let relatedAppsHtml = '';
@@ -878,6 +943,7 @@
                                 </div>
                             </div>
                             <div class="pt-4 flex items-center justify-between border-t border-slate-800">
+                                <!-- FEATURE 6: Clickable Tags in Modal -->
                                 <div class="flex gap-2 flex-wrap">${item.tags.map(tag => `<span onclick="filterByTag(event, '${tag}')" class="text-[10px] text-slate-400 bg-slate-800 px-2 py-1 rounded border border-slate-700 hover:bg-blue-600 hover:text-white cursor-pointer transition">${tag}</span>`).join('')}</div>
                                 <button onclick="${btnAction}" class="${btnClass} px-8 py-3 rounded-xl font-bold transition flex items-center gap-2 shadow-lg shadow-blue-900/20 text-center justify-center min-w-[160px] shrink-0"><i class="ph-bold ${btnIcon}"></i> ${btnText}</button>
                             </div>
@@ -889,7 +955,7 @@
             document.getElementById('product-modal').classList.remove('hidden');
         }
 
-        function createCardHtml(product) {
+        function createCardHtml(product, extraClass = '') {
             const isScript = product.type === "Script";
             const isReady = product.downloadLink !== "#" || isScript;
             
@@ -910,7 +976,7 @@
             const verifiedHtml = product.isVerified ? `<i class="ph-fill ph-seal-check text-blue-400 absolute -bottom-1 -right-1 bg-slate-800 rounded-full text-sm border border-slate-700"></i>` : '';
 
             return `
-                <div id="card-${product.id}" data-action="open-modal" data-id="${product.id}" class="glass-effect rounded-xl p-6 product-card border border-slate-700 flex flex-col h-full relative group">
+                <div id="card-${product.id}" data-action="open-modal" data-id="${product.id}" class="glass-effect rounded-xl p-6 product-card border border-slate-700 flex flex-col h-full relative group ${extraClass}">
                     ${badgeHtml}
                     <div class="flex items-start justify-between mb-4 card-header">
                         <div class="relative bg-slate-800 p-3 rounded-lg border border-slate-700 group-hover:border-blue-500/50 transition-colors">
@@ -946,22 +1012,66 @@
             `;
         }
 
+        // --- FEATURE 2 & 5: Collapsible Categories + Pagination ---
+        function toggleCategory(subId, headerElement) {
+            const content = document.getElementById(subId);
+            const icon = headerElement.querySelector('i.ph-caret-up, i.ph-caret-down');
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                if(icon) icon.classList.replace('ph-caret-down', 'ph-caret-up');
+            } else {
+                content.classList.add('hidden');
+                if(icon) icon.classList.replace('ph-caret-up', 'ph-caret-down');
+            }
+        }
+
+        function loadMoreItems(subId, btnElement) {
+            const container = document.getElementById(subId);
+            if (container) {
+                container.querySelectorAll('.pagination-hidden').forEach(card => {
+                    card.classList.remove('hidden', 'pagination-hidden');
+                });
+            }
+            btnElement.parentElement.remove();
+        }
+
         function renderCatalog() {
             const container = document.getElementById('catalog-container');
             let fullHtml = '';
             
             catalog.forEach(section => {
                 const subsectionsHtml = section.subsections.map(sub => {
-                    const cardsHtml = sub.items.map(item => createCardHtml(item)).join('');
+                    const safeSubId = `sub-${section.id}-${sub.title.replace(/\\s+/g, '-')}`;
+                    
+                    const cardsHtml = sub.items.map((item, index) => {
+                        const hiddenClass = index >= INITIAL_PAGINATION_LIMIT ? 'hidden pagination-hidden' : '';
+                        return createCardHtml(item, hiddenClass);
+                    }).join('');
+
+                    let loadMoreHtml = '';
+                    if (sub.items.length > INITIAL_PAGINATION_LIMIT) {
+                        loadMoreHtml = `
+                            <div class="mt-8 text-center load-more-btn-container">
+                                <button onclick="loadMoreItems('${safeSubId}', this)" class="bg-slate-800 hover:bg-slate-700 text-blue-400 font-semibold py-2 px-6 rounded-lg transition border border-slate-700 shadow-lg flex items-center gap-2 mx-auto">
+                                    <i class="ph-bold ph-caret-down"></i> Show All (${sub.items.length})
+                                </button>
+                            </div>
+                        `;
+                    }
+
                     return `
                         <div class="mb-16 subsection-wrapper">
-                            <div class="flex items-center gap-3 mb-8 pl-4 border-l-4 border-blue-500">
-                                <h3 class="text-2xl font-bold text-slate-200 tracking-tight">${sub.title}</h3>
-                                <span class="bg-slate-800 text-slate-500 text-xs font-bold px-2 py-1 rounded-full">${sub.items.length}</span>
+                            <div class="flex items-center justify-between mb-8 pl-4 border-l-4 border-blue-500 cursor-pointer group select-none" onclick="toggleCategory('${safeSubId}', this)">
+                                <div class="flex items-center gap-3">
+                                    <h3 class="text-2xl font-bold text-slate-200 tracking-tight group-hover:text-blue-400 transition">${sub.title}</h3>
+                                    <span class="bg-slate-800 text-slate-500 text-xs font-bold px-2 py-1 rounded-full">${sub.items.length}</span>
+                                </div>
+                                <i class="ph-bold ph-caret-up text-slate-500 group-hover:text-blue-400 transition transform duration-300"></i>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 grid-wrapper flex-col lg:grid">
+                            <div id="${safeSubId}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 grid-wrapper flex-col lg:grid transition-all duration-300">
                                 ${cardsHtml}
                             </div>
+                            ${loadMoreHtml}
                         </div>
                     `;
                 }).join('');
@@ -981,20 +1091,31 @@
             const noResults = document.getElementById('no-results-msg');
             let totalVisible = 0;
 
+            if (searchTerm !== '') {
+                document.querySelectorAll('.pagination-hidden').forEach(card => card.classList.remove('hidden', 'pagination-hidden'));
+                document.querySelectorAll('.load-more-btn-container').forEach(btn => btn.remove());
+            }
+
             const matchingIds = new Set();
             allItemsList.forEach(item => { if (item.searchString.includes(searchTerm)) matchingIds.add(item.id); });
 
             allItemsList.forEach(item => {
                 if (item.domElement) {
                     const shouldShow = matchingIds.has(item.id);
-                    if (shouldShow && item.domElement.style.display === 'none') item.domElement.style.display = 'flex';
-                    else if (!shouldShow && item.domElement.style.display !== 'none') item.domElement.style.display = 'none';
+                    if (shouldShow && item.domElement.style.display === 'none') {
+                        item.domElement.style.display = 'flex';
+                    } else if (!shouldShow && item.domElement.style.display !== 'none') {
+                        item.domElement.style.display = 'none';
+                    }
+                    if (shouldShow && item.domElement.classList.contains('hidden')) {
+                        item.domElement.classList.remove('hidden');
+                    }
                     if (shouldShow) totalVisible++;
                 }
             });
 
             document.querySelectorAll('.subsection-wrapper').forEach(sub => {
-                const visibleCards = Array.from(sub.querySelectorAll('.product-card')).filter(c => c.style.display !== 'none');
+                const visibleCards = Array.from(sub.querySelectorAll('.product-card')).filter(c => c.style.display !== 'none' && !c.classList.contains('hidden'));
                 sub.style.display = visibleCards.length > 0 ? 'block' : 'none';
             });
             document.querySelectorAll('.section-wrapper').forEach(sec => {
@@ -1011,6 +1132,14 @@
             buttons.forEach(btn => {
                 if(btn.innerText.toLowerCase().includes(category) || (category === 'all' && btn.innerText === 'All')) btn.classList.add('active');
                 else btn.classList.remove('active');
+            });
+
+            document.querySelectorAll('.pagination-hidden').forEach(card => card.classList.remove('hidden', 'pagination-hidden'));
+            document.querySelectorAll('.load-more-btn-container').forEach(btn => btn.remove());
+            document.querySelectorAll('.grid-wrapper').forEach(wrapper => {
+                wrapper.classList.remove('hidden');
+                const icon = wrapper.previousElementSibling.querySelector('i.ph-caret-down');
+                if(icon) icon.classList.replace('ph-caret-down', 'ph-caret-up');
             });
             
             if (category === 'favorites') {
@@ -1054,3 +1183,5 @@
     </script>
 </body>
 </html>
+
+
