@@ -186,9 +186,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center gap-2 cursor-pointer group" onclick="this.querySelector('i').classList.add('animate-spin-fast'); setTimeout(() => this.querySelector('i').classList.remove('animate-spin-fast'), 500)">
-                    <i class="ph-fill ph-cube text-blue-500 text-3xl transition-transform"></i>
-                    <!-- APPLIED CUSTOM FONT HERE -->
-                    <span class="font-zentry-logo text-2xl tracking-wide font-bold">Zentry</span>
+                    <i class="ph-fill ph-cube text-blue-500 text-3xl transition-transform leading-none"></i>
+                    <!-- FIXED: Added line-height adjustment for perfect vertical alignment -->
+                    <span class="font-zentry-logo text-2xl tracking-wide font-bold leading-none">Zentry</span>
                 </div>
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-4">
@@ -289,7 +289,10 @@
             <div class="max-w-4xl mx-auto mb-16">
                 <div class="flex flex-col md:flex-row gap-4 mb-2">
                     <div class="relative group flex-grow">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><i class="ph-bold ph-magnifying-glass text-slate-500 group-focus-within:text-blue-500 transition-colors"></i></div>
+                        <!-- FIXED: Improved icon centering with better flex alignment -->
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center justify-center pointer-events-none">
+                            <i class="ph-bold ph-magnifying-glass text-slate-500 group-focus-within:text-blue-500 transition-colors text-lg"></i>
+                        </div>
                         <input type="text" id="global-search" placeholder="Filter by name, tag, or description..." class="block w-full pl-11 pr-4 py-4 bg-slate-950 border border-slate-800 rounded-xl leading-5 text-slate-300 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all shadow-lg shadow-black/20" onkeyup="debouncedSearch(this.value)">
                         <div class="absolute inset-y-0 right-0 pr-4 flex items-center hidden md:flex"><span class="text-xs text-slate-600 border border-slate-800 rounded px-1.5 py-0.5">/ to search</span></div>
                         
