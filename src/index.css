@@ -1,0 +1,197 @@
+@import url('https://fonts.googleapis.com/css2?family=Share:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background: linear-gradient(to bottom, #000 0%, #0f172a 50%);
+    color: #f8fafc;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0f172a;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    body {
+      cursor:
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%233b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 3 21 11 12 14 8 22 3 3"></polygon></svg>'),
+        auto;
+    }
+    a,
+    button,
+    .cursor-pointer,
+    select,
+    input {
+      cursor:
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="rgba(59,130,246,0.3)" stroke="%233b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 3 21 11 12 14 8 22 3 3"></polygon></svg>'),
+        pointer !important;
+    }
+  }
+}
+
+@layer components {
+  .glass-effect {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .product-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.15);
+    border-color: #3b82f6;
+  }
+
+  .filter-pill {
+    transition: all 0.2s;
+  }
+  .filter-pill.active {
+    background-color: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+  }
+
+  .heart-btn {
+    transition: transform 0.2s;
+  }
+  .heart-btn:active {
+    transform: scale(0.8);
+  }
+  .heart-btn.active i {
+    color: #ef4444;
+    font-weight: bold;
+  }
+
+  /* Matrix Mode */
+  body.matrix-mode {
+    background-color: #000;
+    color: #0f0 !important;
+    font-family: "Courier New", monospace;
+  }
+  body.matrix-mode .glass-effect,
+  body.matrix-mode .bg-slate-900,
+  body.matrix-mode .bg-slate-800 {
+    background-color: #001100 !important;
+    border-color: #0f0 !important;
+  }
+  body.matrix-mode .product-card,
+  body.matrix-mode nav,
+  body.matrix-mode .modal-panel,
+  body.matrix-mode input,
+  body.matrix-mode select,
+  body.matrix-mode button {
+    border-color: rgba(0, 255, 0, 0.3) !important;
+  }
+  body.matrix-mode .text-blue-500,
+  body.matrix-mode .text-blue-400,
+  body.matrix-mode .bg-blue-600 {
+    color: #0f0 !important;
+    background-color: #003300 !important;
+  }
+  body.matrix-mode .heart-btn.active i {
+    color: #0f0 !important;
+  }
+
+  /* Hide scrollbar utility */
+  .hide-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scroll {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@layer utilities {
+  .blob-mini {
+    animation: blob-float 6s ease-in-out infinite;
+    will-change: transform;
+  }
+
+  @keyframes blob-float {
+    0%,
+    100% {
+      transform: translateY(0) scale(1);
+    }
+    50% {
+      transform: translateY(-10px) scale(1.05);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  .skeleton {
+    background: #1e293b;
+    background-image: linear-gradient(
+      to right,
+      #1e293b 0%,
+      #334155 20%,
+      #1e293b 40%,
+      #1e293b 100%
+    );
+    background-repeat: no-repeat;
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite linear forwards;
+  }
+}
+
+/* Animations that are global / keyframes */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes ticker {
+  0% {
+    transform: translate3d(100vw, 0, 0);
+  }
+  100% {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+/* ACCESSIBILITY: Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .blob-mini,
+  .ticker,
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
