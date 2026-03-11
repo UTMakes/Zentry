@@ -1,0 +1,8 @@
+{
+  "name": "zentry",
+  "version": "1.0.0",
+  "description": "Zentry Website",
+  "scripts": {
+    "build": "echo 'Static site, no build required'"
+  }
+}
