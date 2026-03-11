@@ -64,14 +64,6 @@ function App() {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar onSurpriseMe={handleSurpriseMe} />
-      
-      {/* Ticker */}
-      <div className="ticker-wrap hidden sm:block">
-        <div className="ticker">
-          <span className="mr-16">{tickerDataTemplate.join(" • ")}</span>
-          <span className="mr-16">{tickerDataTemplate.join(" • ")}</span>
-        </div>
-      </div>
 
       <Hero onSurpriseMe={handleSurpriseMe} />
       
