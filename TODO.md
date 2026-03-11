@@ -19,6 +19,18 @@ This document tracks upcoming features, refactoring goals, and technical debt to
 - [ ] **Admin Dashboard:** Create a `/admin` route (password protected) that allows approved users to directly Add, Edit, or Delete software from the catalog without touching code.
 - [ ] **Direct File Uploads:** Connect an S3-compatible storage bucket (like AWS S3, R2, or Firebase Storage) to handle artifact uploads directly via the new Admin Dashboard.
 
-## Phase 4: Architectural Overhaul (Optional but recommended long-term)
+## Phase 4: Architectural Overhaul (COMPLETED)
 
-- [ ] **Migrate to Next.js or Vite (React/Vue):** As the HTML/JS becomes more complex, maintaining UI state (like filters, sorting, modals) gets harder. Migrating to a modern Component-based framework solves this effortlessly while boosting page speed.
+- [x] **Migrate to Next.js or Vite (React/Vue):** We successfully migrated to Vite + React!
+
+## Phase 5: Community & Social Features
+
+- [ ] **User Comments & Reviews:** Allow authenticated users to leave ratings (1-5 stars) and comments on individual software pages.
+- [ ] **Developer Profiles:** Create public profiles for software authors (like `ScriptGod` or `BloxStraplabs`) showing all the tools they've published.
+- [ ] **Discord Integration:** Add a webhook so that whenever a new script or game is added to the Zentry catalog, it automatically pings your Discord server's #announcements channel.
+
+## Phase 6: Advanced Analytics & Monetization
+
+- [ ] **Download Tracking:** Instead of hardcoded download counts, implement an API route that increments the real download amount in the database every time a user clicks "Download".
+- [ ] **Trending Algorithm:** Replace the manual "trending" tags with a dynamic algorithm that calculates what's hot based on downloads over the last 24 hours.
+- [ ] **Premium Tiers:** Introduce a "Pro" subscription using Stripe to gate specific, high-tier private scripts or remove ads.
