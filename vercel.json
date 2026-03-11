@@ -1,5 +1,0 @@
-{
-  "framework": Vite,
-  "buildCommand": "exit 0",
-  "outputDirectory": "."
-}
